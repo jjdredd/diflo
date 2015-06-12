@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "particle.hpp"
-#include "event.hpp"
+#include "dist.hpp"
 #include "data.hpp"
+#include "momentum.hpp"
 
 
 int main(int argc, char **argv){
@@ -20,7 +20,7 @@ int main(int argc, char **argv){
   // mesons
   {
     s.open(argv[1]);
-    if(s.is_open()) D.readin_mesons(s);
+    if(s.is_open()) D.readin_particles(s, true);
     // else std::cout << "Warning: couldn't open mesons file "
     // 		   << argv[1] << '\n';
     s.close();
@@ -28,15 +28,16 @@ int main(int argc, char **argv){
   // baryons
   {
     s.open(argv[2]);
-    if(s.is_open()) D.readin_baryons(s);
+    if(s.is_open()) D.readin_particles(s, false);
     // else std::cout << "Warning: couldn't open mesons file "
     // 		   << argv[2] << '\n';
     s.close();
   }
 
-  // D.report_pnum(std::cout);
+  D.report_pnum(std::cout);
 
-  std::cout << D.meson_count() << '\n';
+  std::cout << "<P_x>, for P_z > 0 : " << MeanPx(D, true)
+	    << "\n<P_x>, for P_z < 0 : " << MeanPx(D, false) << "\n";
 
   return 0;
 }

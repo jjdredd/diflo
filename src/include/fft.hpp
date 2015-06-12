@@ -12,14 +12,14 @@ public:
 	fft(int n);
 	~fft();
 	void FTrans(unsigned *a);
-	float GetV(unsigned i);
-	float GetA(unsigned i);
+	double GetV(unsigned i);
+	double GetA(unsigned i);
 
 private:
 	// mostly the stuff needed for gsl fft goes here
 	gsl_fft_real_wavetable *rwt;
 	gsl_fft_halfcomplex_wavetable *hcwt;
-	gsl_fft_read_workspace *work;
+	gsl_fft_real_workspace *work;
 	unsigned *rda;		// array of real data that is passed in for
 				// transform
 };

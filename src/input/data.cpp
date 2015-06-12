@@ -1,5 +1,64 @@
 #include "data.hpp"
 
+
+//
+// particle
+//
+
+particle::particle(){}
+
+particle::particle(double x, double y, double z, double Px,
+		   double Py, double Pz, double P0, double b,
+		   int type, int charge, bool meson)
+	: x(x), y(y), z(z), Px(Px), Py(Py), Pz(Pz), P0(P0), b(b),
+	  type(type), charge(charge), meson(meson){}
+
+particle::~particle(){}
+
+bool particle::operator==(double *p){
+	return ((fabsf(this->P0 - p[0]) < THRES)
+		&& (fabsf(this->Px - p[1]) < THRES)
+		&& (fabsf(this->Py - p[2]) < THRES)
+		&& (fabsf(this->Pz - p[3]) < THRES));
+}
+
+double particle::rapid(){
+	return atanf(Pz/P0);
+}
+
+double particle::p(){
+	return sqrtf(Px*Px + Py*Py + Pz*Pz);
+}
+
+double particle::aangle(){
+	return asinf(Pz/p());
+}
+
+bool particle::of_type(int t, int c, bool m){
+	return (m == meson) && (c == charge) && (t == type);
+}
+
+//
+// event
+//
+
+event::event(){}
+
+event::~event(){}
+
+void event::add_particle(particle &p){
+	particles.push_back(p);
+	return;
+}
+
+unsigned int event::particle_count(){
+	return particles.size();
+}
+
+//
+// data class
+//
+
 data::data(std::ifstream &s){
 	char str[128];
 	int n;
@@ -7,14 +66,14 @@ data::data(std::ifstream &s){
 	s.getline(str, 128);
 	sscanf(str, "%i", &A);
 	for (n = 1; n < 5; n++) s.getline(str, 128); /* skip */
-	sscanf(str, "%f,", &Elab);
+	sscanf(str, "%lf,", &Elab);
 	for (; n < 9; n++) s.getline(str, 128);
 	sscanf(str, "%i,", &NUM);
 	s.getline(str, 128);
 	sscanf(str, "%i", &ISUBS);
 	s.getline(str, 128); 	/* skip seed */
 	s.getline(str, 128);	/* time */
-	sscanf(str, "%f", &Time);
+	sscanf(str, "%lf", &Time);
 
 	P = new event* [ISUBS];
 	for(int i = 0; i < ISUBS; i++) P[i] = new event[NUM];
@@ -33,7 +92,8 @@ void data::readin_particles(std::ifstream &s, bool mesons){
 	particle ptcl;
 
 	s.getline(str, 256);
-	while((sscanf(str, "\t%i\t%i\t%i\t%i\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",
+	while((sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
+		      "\t%lf\t%lf\t%lf\t%lf\n",
 		      &ptcl.type, &ptcl.charge, &isub, &irun,
 		      &ptcl.Px, &ptcl.Py, &ptcl.Pz, &ptcl.P0, &ptcl.b,
 		      &ptcl.x, &ptcl.y, &ptcl.z) == 12)
