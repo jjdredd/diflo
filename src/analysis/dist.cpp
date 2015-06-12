@@ -60,5 +60,5 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 }
 
 void distribution::DistTransform(int yn){
-	f.FTrans(d[yn]);
+	// f.FTrans(d[yn]);
 }

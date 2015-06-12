@@ -3,13 +3,16 @@ IFLAGS=-iquote ./include
 OPTFLAGS=-march=native -ffast-math -O3 -msse4 -funroll-loops
 CFLAGS=$(IFLAGS) $(WFLAGS) $(OPTFLAGS)
 CXXFLAGS=$(CFLAGS)
+LDFLAGS=-lgsl
 INPUT_F=input/data.o
 ANALYS_F=analysis/fft.o analysis/dist.o analysis/momentum.o
 
 all: diflo.elf
 
 diflo.elf: diflo.cpp inputlib analys
-	g++ $(CXXFLAGS) diflo.cpp $(INPUT_F) $(ANALYS_F) -o diflo.elf
+	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \
+	$(INPUT_F) $(ANALYS_F) \
+	-o diflo.elf
 
 inputlib:
 	$(MAKE) -C input
