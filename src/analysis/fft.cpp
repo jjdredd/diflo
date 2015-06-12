@@ -1,6 +1,6 @@
 #include "fft.hpp"
 
-fft::fft(int n){
+fft::fft(int n) : size(n) {
 	
 }
 

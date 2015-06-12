@@ -22,6 +22,7 @@ private:
 	gsl_fft_real_workspace *work;
 	unsigned *rda;		// array of real data that is passed in for
 				// transform
+	unsigned size;		// size of input data
 };
 
 #endif	// FFT_HPP

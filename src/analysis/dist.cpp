@@ -1,5 +1,4 @@
 #include "dist.hpp"
-#include <cmath>
 
 distribution::distribution(unsigned ny = 100, unsigned nphi = 100)
 	: ny(ny), nphi(nphi), f(nphi) {
@@ -26,8 +25,9 @@ void distribution::DataDist(data& D){
 
 				rapidity = D.P[isub][irun].particles[i].rapid();
 				angle = D.P[isub][irun].particles[i].aangle();
-				ybin = (int) floor(rapidity * ny) + ny/2;
-				phibin = (int) floor(angle * nphi) + nphi/2;
+				ybin = (int) floor(rapidity * ny/2) + ny/2;
+				phibin = (int) floor(angle * nphi/M_PI)
+					+ nphi/2;
 				d[ybin][phibin]++;
 			}
 		}
@@ -50,8 +50,9 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 
 				rapidity = D.P[isub][irun].particles[i].rapid();
 				angle = D.P[isub][irun].particles[i].aangle();
-				ybin = (int) floor(rapidity * ny) + ny/2;
-				phibin = (int) floor(angle * nphi) + nphi/2;
+				ybin = (int) floor(rapidity * ny/2) + ny/2;
+				phibin = (int) floor(angle * nphi/M_PI)
+					+ nphi/2;
 				d[ybin][phibin]++;
 			}
 		}

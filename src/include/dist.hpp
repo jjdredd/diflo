@@ -3,6 +3,7 @@
 
 #include "data.hpp"
 #include "fft.hpp"
+#include <cmath>
 
 //
 // distribution over azimuthal angle and rapidity of particles
