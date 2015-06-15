@@ -15,7 +15,7 @@ int main(int argc, char **argv){
   }
 
   std::ifstream s(argv[3]);
-  data D(s);
+  data D(s, HSD_VER_COORD);
   s.close();
   // mesons
   {

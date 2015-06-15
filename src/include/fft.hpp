@@ -22,6 +22,7 @@ private:
 	gsl_fft_real_workspace *work;
 	double *rda;		// array of real data that is passed in for
 				// transform
+	double *uphc;		// unpacked half-complex array
 	unsigned size;		// size of input data
 };
 

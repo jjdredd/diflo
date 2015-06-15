@@ -2,8 +2,8 @@
 
 distribution::distribution(unsigned ny = 100, unsigned nphi = 100)
 	: ny(ny), nphi(nphi), f(nphi) {
-	d = new unsigned* [ny];
-	for(unsigned i = 0; i < ny; i++) d[i] = new unsigned [nphi];
+	d = new double* [ny];
+	for(unsigned i = 0; i < ny; i++) d[i] = new double [nphi];
 	return;
 }
 
@@ -28,7 +28,7 @@ void distribution::DataDist(data& D){
 				ybin = (int) floor(rapidity * ny/2) + ny/2;
 				phibin = (int) floor(angle * nphi/M_PI)
 					+ nphi/2;
-				d[ybin][phibin]++;
+				d[ybin][phibin] += 1.0;
 			}
 		}
 	}
@@ -53,12 +53,12 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 				ybin = (int) floor(rapidity * ny/2) + ny/2;
 				phibin = (int) floor(angle * nphi/M_PI)
 					+ nphi/2;
-				d[ybin][phibin]++;
+				d[ybin][phibin] += 1.0;
 			}
 		}
 	}
 }
 
 void distribution::DistTransform(int yn){
-	// f.FTrans(d[yn]);
+	f.FTrans(d[yn]);
 }

@@ -56,16 +56,27 @@ struct event {
 // represents a whole set of input data
 //
 
+enum HSDVersion {
+	HSD_VER_ORIG,
+	HSD_VER_COORD,
+	HSD_VER_PHSD
+};
+
 class data {
 
 public:
 	int ISUBS, NUM, A;
 	double Elab, Time;
 	event **P;
-	data(std::ifstream &s);
+	HSDVersion hsd_ver;
+	data(std::ifstream &s, HSDVersion v);
 	~data();
 	void report_pnum(std::ostream &os);
 	void readin_particles(std::ifstream &s, bool mesons);
+
+private:
+	bool parse_input_line(char *str, int *isub, int *irun, particle *p);
+
 };
 
 #endif	// DATA_HPP

@@ -59,7 +59,7 @@ unsigned int event::particle_count(){
 // data class
 //
 
-data::data(std::ifstream &s){
+data::data(std::ifstream &s, HSDVersion v) : hsd_ver(v) {
 	char str[128];
 	int n;
 	// read input
@@ -85,6 +85,31 @@ data::~data(){
 	delete[] P;
 }
 
+bool data::parse_input_line(char *str, int *isub, int *irun, particle *p){
+
+	switch(hsd_ver) {
+
+	case HSD_VER_ORIG:
+		return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
+			       "\t%lf\n", &p->type, &p->charge, isub, irun,
+			       &p->Px, &p->Py, &p->Pz, &p->P0, &p->b) == 9);
+
+	case HSD_VER_COORD:
+		return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
+			       "\t%lf\t%lf\t%lf\t%lf\n",
+			       &p->type, &p->charge, isub, irun,
+			       &p->Px, &p->Py, &p->Pz, &p->P0,
+			       &p->b, &p->x, &p->y, &p->z) == 12);
+
+	case HSD_VER_PHSD:
+	default:		// must be empty
+
+		// TODO: for PHSD output format
+		std::cerr << "HSD_VER_PHSD not implemented, exiting!\n";
+		return false;
+	}
+}
+
 void data::readin_particles(std::ifstream &s, bool mesons){
     
 	int isub, irun;
@@ -92,13 +117,7 @@ void data::readin_particles(std::ifstream &s, bool mesons){
 	particle ptcl;
 
 	s.getline(str, 256);
-	while((sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
-		      "\t%lf\t%lf\t%lf\t%lf\n",
-		      &ptcl.type, &ptcl.charge, &isub, &irun,
-		      &ptcl.Px, &ptcl.Py, &ptcl.Pz, &ptcl.P0, &ptcl.b,
-		      &ptcl.x, &ptcl.y, &ptcl.z) == 12)
-	      && (!s.eof())){
-
+	while(parse_input_line(str, &isub, &irun, &ptcl) && (!s.eof())){
 		isub--; irun--;
 		ptcl.meson = mesons;
 		P[isub][irun].add_particle(ptcl);

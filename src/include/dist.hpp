@@ -26,7 +26,7 @@ private:
 	int type, charge;
 	unsigned ny, nphi;
 	bool typed;
-	unsigned **d;
+	double **d;
 	fft f;
 };
 
