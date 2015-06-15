@@ -1,10 +1,5 @@
-WFLAGS=-W -Wall -Wextra
-IFLAGS=-iquote ../include
-OPTFLAGS=-march=native -ffast-math -O3 -msse4 -funroll-loops
-CFLAGS=$(IFLAGS) $(WFLAGS) $(OPTFLAGS)
-CXXFLAGS=$(CFLAGS)
 
-# just organize everything into an .a lib to avoid mess
+# just organize everything into an .a lib to avoid mess ???
 
 all: dist.o fft.o momentum.o
 
