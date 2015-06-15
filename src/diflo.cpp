@@ -14,6 +14,10 @@ int main(int argc, char **argv){
     return -1;
   }
 
+  //
+  // TODO getopt for advanced tweaking
+  //
+
   std::ifstream s(argv[3]);
   data D(s, HSD_VER_COORD);
   s.close();
