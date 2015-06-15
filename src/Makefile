@@ -11,13 +11,13 @@ all: diflo.elf diflo.server.elf64
 
 diflo.server.elf64: CFLAGS += -msse4 -I/home/ltph/usubov/usr/include
 diflo.server.elf64: CXXFLAGS += -msse4 -I/home/ltph/usubov/usr/include
-diflo.server.elf64: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl
+diflo.server.elf64: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
 diflo.server.elf64: diflo.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \
 	$(INPUT_F) $(ANALYS_F) \
-	-o diflo.semi-static.elf
+	-o diflo.server.elf64
 
-diflo.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl
+diflo.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
 diflo.elf: diflo.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \
 	$(INPUT_F) $(ANALYS_F) \
