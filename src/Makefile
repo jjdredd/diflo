@@ -15,7 +15,7 @@ diflo.server.elf64: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl
 diflo.server.elf64: diflo.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \
 	$(INPUT_F) $(ANALYS_F) \
-	-o diflo.semi-static.elf /usr/lib/libgsl.a
+	-o diflo.semi-static.elf
 
 diflo.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl
 diflo.elf: diflo.cpp inputlib analys
