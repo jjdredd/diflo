@@ -3,7 +3,7 @@ IFLAGS = -iquote $(shell pwd)/include
 OPTFLAGS = -march=native -ffast-math -O3 -funroll-loops
 export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS)
 export CXXFLAGS = $(CFLAGS)
-export LDFLAGS = -lgsl -lm
+export LDFLAGS = -lm
 INPUT_F = input/data.o
 ANALYS_F = analysis/fft.o analysis/dist.o analysis/momentum.o
 
@@ -11,12 +11,13 @@ all: diflo.elf diflo.server.elf64
 
 diflo.server.elf64: CFLAGS += -msse4 -I/home/ltph/usubov/usr/include
 diflo.server.elf64: CXXFLAGS += -msse4 -I/home/ltph/usubov/usr/include
-diflo.server.elf64: LDFLAGS += -L/home/ltph/usubov/usr/lib
+diflo.server.elf64: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl
 diflo.server.elf64: diflo.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \
 	$(INPUT_F) $(ANALYS_F) \
 	-o diflo.semi-static.elf /usr/lib/libgsl.a
 
+diflo.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl
 diflo.elf: diflo.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \
 	$(INPUT_F) $(ANALYS_F) \
