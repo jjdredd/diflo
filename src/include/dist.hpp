@@ -13,11 +13,12 @@
 class distribution {
 
 public:
-	distribution(unsigned ny, unsigned nphi);
+	distribution(unsigned ny = 100, unsigned nphi = 100);
 	~distribution();
 	void DataDist(data&, int type, int charge, bool meson);
 	void DataDist(data&);
-	void DistTransform(int yn);
+	void DistTransform(double rapidity);
+	void PrintFlows(std::ostream &s);
 	// GetType();
 	// GetCharge();
 	// GetEvent();

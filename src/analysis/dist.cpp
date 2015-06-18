@@ -1,6 +1,6 @@
 #include "dist.hpp"
 
-distribution::distribution(unsigned ny = 100, unsigned nphi = 100)
+distribution::distribution(unsigned ny, unsigned nphi)
 	: ny(ny), nphi(nphi), f(nphi) {
 	d = new double* [ny];
 	for(unsigned i = 0; i < ny; i++) d[i] = new double [nphi];
@@ -59,6 +59,12 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 	}
 }
 
-void distribution::DistTransform(int yn){
-	f.FTrans(d[yn]);
+void distribution::DistTransform(double rapidity){
+	int ybin = (int) floor(rapidity * ny/2) + ny/2;
+	f.FTrans(d[ybin]);
+}
+
+void distribution::PrintFlows(std::ostream &s){
+	s << "v_2 = " << f.GetV(2)
+	  << "\na_2 = " << f.GetA(2) << '\n';
 }

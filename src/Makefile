@@ -1,6 +1,6 @@
 WFLAGS = -W -Wall -Wextra
 IFLAGS = -iquote $(shell pwd)/include
-OPTFLAGS = -march=native -ffast-math -O3 -funroll-loops
+OPTFLAGS = -g #-march=native -ffast-math -O3 -funroll-loops
 export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS)
 export CXXFLAGS = $(CFLAGS)
 export LDFLAGS = -lm
