@@ -10,7 +10,7 @@ ANALYS_F = analysis/fft.o analysis/dist.o analysis/momentum.o
 all: diflo.elf diflo.server.elf64
 
 diflo.server.elf64: CFLAGS += -msse4 -I/home/ltph/usubov/usr/include
-diflo.server.elf64: CXXFLAGS += -msse4 -I/home/ltph/usubov/usr/include
+diflo.server.elf64: CXXFLAGS += -I/home/ltph/usubov/usr/include
 diflo.server.elf64: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
 diflo.server.elf64: diflo.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \

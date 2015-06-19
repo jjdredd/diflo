@@ -19,6 +19,8 @@ public:
 	void DataDist(data&);
 	void DistTransform(double rapidity);
 	void PrintFlows(std::ostream &s);
+	void WriteDistr(std::ostream &s);
+	void WriteDistrFT(std::ostream &s);
 	// GetType();
 	// GetCharge();
 	// GetEvent();
@@ -27,7 +29,7 @@ private:
 	int type, charge;
 	unsigned ny, nphi;
 	bool typed;
-	double **d;
+	double **d;		// distribution over rapidities and angle
 	fft f;
 };
 

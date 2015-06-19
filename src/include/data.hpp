@@ -66,7 +66,7 @@ class data {
 
 public:
 	int ISUBS, NUM, A;
-	double Elab, Time;
+	double Elab, Time, NParticles;
 	event **P;
 	HSDVersion hsd_ver;
 	data(std::ifstream &s, HSDVersion v);

@@ -23,7 +23,7 @@ bool particle::operator==(double *p){
 }
 
 double particle::rapid(){
-	return atanf(Pz/P0);
+	return atanf(Py/P0);
 }
 
 double particle::p(){
@@ -121,6 +121,7 @@ void data::readin_particles(std::ifstream &s, bool mesons){
 		isub--; irun--;
 		ptcl.meson = mesons;
 		P[isub][irun].add_particle(ptcl);
+		NParticles += 1.0;
 		s.getline(str, 256);
 	}
 	return;

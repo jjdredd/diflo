@@ -28,10 +28,22 @@ void distribution::DataDist(data& D){
 				ybin = (int) floor(rapidity * ny/2) + ny/2;
 				phibin = (int) floor(angle * nphi/M_PI)
 					+ nphi/2;
+
+				// this can happen
+				if (phibin == nphi) phibin = nphi - 1;
+				if (phibin == -1) phibin = 0;
+				if (ybin == ny) ybin = ny -1;
+				if (ybin == -1) ybin = 0;
+
 				d[ybin][phibin] += 1.0;
 			}
 		}
 	}
+
+	// now normalize to get a distribution
+	for (unsigned i = 0; i < ny; i++)
+		for (unsigned j = 0; j < nphi; j++)
+			d[i][j] /= D.NParticles;
 }
 
 void distribution::DataDist(data& D, int type, int charge, bool meson){
@@ -53,10 +65,22 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 				ybin = (int) floor(rapidity * ny/2) + ny/2;
 				phibin = (int) floor(angle * nphi/M_PI)
 					+ nphi/2;
+
+				// this can happen
+				if (phibin == nphi) phibin = nphi - 1;
+				if (phibin == -1) phibin = 0;
+				if (ybin == ny) ybin = ny -1;
+				if (ybin == -1) ybin = 0;
+
 				d[ybin][phibin] += 1.0;
 			}
 		}
 	}
+
+	// now normalize to get a distribution
+	for (unsigned i = 0; i < ny; i++)
+		for (unsigned j = 0; j < nphi; j++)
+			d[i][j] /= D.NParticles;
 }
 
 void distribution::DistTransform(double rapidity){
@@ -67,4 +91,23 @@ void distribution::DistTransform(double rapidity){
 void distribution::PrintFlows(std::ostream &s){
 	s << "v_2 = " << f.GetV(2)
 	  << "\na_2 = " << f.GetA(2) << '\n';
+}
+
+void distribution::WriteDistr(std::ostream &s){
+	int ybin;
+	const double dphi = M_PI/nphi;
+	for (unsigned i = 0; i < nphi; i++){
+		for (double r = -1.0; r < 1.0; r += 0.1){
+			ybin = (int) floor(r * ny/2) + ny/2;
+			s << i*dphi - M_PI_2 << '\t' << r << '\t'
+			  << d[ybin][i] << std::endl;
+		}
+		s << std::endl;
+	}
+}
+
+void distribution::WriteDistrFT(std::ostream &s) {
+	for (unsigned i = 0; i < nphi; i++)
+		s << i << '\t' << f.GetV(i) << '\t'
+		  << f.GetA(i) << std::endl;
 }

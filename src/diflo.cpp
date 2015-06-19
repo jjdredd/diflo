@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "dist.hpp"
 #include "data.hpp"
@@ -43,10 +44,15 @@ int main(int argc, char **argv){
 	std::cout << "<P_x>, for P_z > 0 : " << MeanPx(D, true)
 		  << "\n<P_x>, for P_z < 0 : " << MeanPx(D, false) << "\n";
 
-	distribution dst(24, 24);
+	distribution dst(20, 20);
 	dst.DataDist(D);
 	dst.DistTransform(0.5);
 	dst.PrintFlows(std::cout);
+
+	std::ofstream distout("./distout");
+	dst.WriteDistr(distout);
+	std::ofstream ftout("./ftout");
+	dst.WriteDistrFT(ftout);
 
 	return 0;
 }
