@@ -3,7 +3,7 @@
 distribution::distribution(unsigned ny, unsigned nphi)
 	: ny(ny), nphi(nphi), f(nphi) {
 	d = new double* [ny];
-	for(unsigned i = 0; i < ny; i++) d[i] = new double [nphi];
+	for(unsigned i = 0; i < ny; i++) d[i] = new double [nphi]();
 	return;
 }
 
@@ -13,10 +13,26 @@ distribution::~distribution(){
 	return;
 }
 
+unsigned distribution::BinY(double rapidity) {
+	int ybin = (int) floor(rapidity * ny/2) + ny/2;
+	if (ybin == ny) ybin = ny -1;
+	if (ybin == -1) ybin = 0;
+	return ybin;
+}
+
+unsigned distribution::BinPhi(double angle) {
+
+	int phibin = (int) floor(angle * nphi/M_PI) + nphi/2;
+	// this can happen
+	if (phibin == nphi) phibin = nphi - 1;
+	if (phibin == -1) phibin = 0;
+	return phibin;
+}
+
 void distribution::DataDist(data& D){
 
 	double rapidity, angle;
-	int ybin, phibin;
+	unsigned ybin, phibin;
 
 	for(int isub = 0; isub < D.ISUBS; isub++){
 		for(int irun = 0; irun < D.NUM; irun++){
@@ -25,15 +41,9 @@ void distribution::DataDist(data& D){
 
 				rapidity = D.P[isub][irun].particles[i].rapid();
 				angle = D.P[isub][irun].particles[i].aangle();
-				ybin = (int) floor(rapidity * ny/2) + ny/2;
-				phibin = (int) floor(angle * nphi/M_PI)
-					+ nphi/2;
 
-				// this can happen
-				if (phibin == nphi) phibin = nphi - 1;
-				if (phibin == -1) phibin = 0;
-				if (ybin == ny) ybin = ny -1;
-				if (ybin == -1) ybin = 0;
+				ybin = BinY(rapidity);
+				phibin = BinPhi(angle);
 
 				d[ybin][phibin] += 1.0;
 			}
@@ -62,15 +72,9 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 
 				rapidity = D.P[isub][irun].particles[i].rapid();
 				angle = D.P[isub][irun].particles[i].aangle();
-				ybin = (int) floor(rapidity * ny/2) + ny/2;
-				phibin = (int) floor(angle * nphi/M_PI)
-					+ nphi/2;
 
-				// this can happen
-				if (phibin == nphi) phibin = nphi - 1;
-				if (phibin == -1) phibin = 0;
-				if (ybin == ny) ybin = ny -1;
-				if (ybin == -1) ybin = 0;
+				ybin = BinY(rapidity);
+				phibin = BinPhi(angle);
 
 				d[ybin][phibin] += 1.0;
 			}
@@ -84,7 +88,7 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 }
 
 void distribution::DistTransform(double rapidity){
-	int ybin = (int) floor(rapidity * ny/2) + ny/2;
+	int ybin = BinY(rapidity);
 	f.FTrans(d[ybin]);
 }
 
@@ -98,7 +102,7 @@ void distribution::WriteDistr(std::ostream &s){
 	const double dphi = M_PI/nphi;
 	for (unsigned i = 0; i < nphi; i++){
 		for (double r = -1.0; r < 1.0; r += 0.1){
-			ybin = (int) floor(r * ny/2) + ny/2;
+			ybin = BinY(r);
 			s << i*dphi - M_PI_2 << '\t' << r << '\t'
 			  << d[ybin][i] << std::endl;
 		}

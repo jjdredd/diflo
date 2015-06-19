@@ -3,8 +3,8 @@
 fft::fft(int n) : size(n) {
 	work = gsl_fft_real_workspace_alloc(size);
 	rwt = gsl_fft_real_wavetable_alloc(size);
-	rda = new double [size];
-	uphc = new double [2*size];
+	rda = new double [size]();
+	uphc = new double [2*size]();
 }
 
 fft::~fft(){

@@ -23,7 +23,7 @@ bool particle::operator==(double *p){
 }
 
 double particle::rapid(){
-	return atanf(Py/P0);
+	return atanf(Pz/P0);
 }
 
 double particle::p(){
@@ -31,7 +31,7 @@ double particle::p(){
 }
 
 double particle::aangle(){
-	return asinf(Pz/p());
+	return asinf(Py/p());
 }
 
 bool particle::of_type(int t, int c, bool m){

@@ -44,7 +44,7 @@ int main(int argc, char **argv){
 	std::cout << "<P_x>, for P_z > 0 : " << MeanPx(D, true)
 		  << "\n<P_x>, for P_z < 0 : " << MeanPx(D, false) << "\n";
 
-	distribution dst(20, 20);
+	distribution dst(25, 100);
 	dst.DataDist(D);
 	dst.DistTransform(0.5);
 	dst.PrintFlows(std::cout);

@@ -31,6 +31,9 @@ private:
 	bool typed;
 	double **d;		// distribution over rapidities and angle
 	fft f;
+
+	unsigned BinY(double rapidity);
+	unsigned BinPhi(double angle);
 };
 
 #endif	// DIST_HPP
