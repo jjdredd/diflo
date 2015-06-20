@@ -87,6 +87,8 @@ data::~data(){
 
 bool data::parse_input_line(char *str, int *isub, int *irun, particle *p){
 
+	int unk;
+
 	switch(hsd_ver) {
 
 	case HSD_VER_ORIG:
@@ -102,6 +104,12 @@ bool data::parse_input_line(char *str, int *isub, int *irun, particle *p){
 			       &p->b, &p->x, &p->y, &p->z) == 12);
 
 	case HSD_VER_PHSD:
+		return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
+			       "\t%lf\t%i\n",
+			       &p->type, &p->charge, isub, irun,
+			       &p->Px, &p->Py, &p->Pz, &p->P0,
+			       &p->b, &unk) == 10 );
+
 	default:		// must be empty
 
 		// TODO: for PHSD output format
@@ -127,13 +135,12 @@ void data::readin_particles(std::ifstream &s, bool mesons){
 	return;
 }
 
-void data::report_pnum(std::ostream &os){
-	int totnum = 0;
+unsigned data::NumberOfParticles(){
+	unsigned totnum = 0;
 	for(int isub = 0; isub < ISUBS; isub++){
 		for(int irun = 0; irun < NUM; irun++){
 			totnum += P[isub][irun].particle_count();
 		}
 	}
-	os << "Read in " << totnum << " particles\n";
-	return;
+	return totnum;
 }

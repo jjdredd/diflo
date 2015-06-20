@@ -32,7 +32,7 @@ unsigned distribution::BinPhi(double angle) {
 void distribution::DataDist(data& D){
 
 	double rapidity, angle;
-	unsigned ybin, phibin;
+	unsigned ybin, phibin, pnum = D.NumberOfParticles();
 
 	for(int isub = 0; isub < D.ISUBS; isub++){
 		for(int irun = 0; irun < D.NUM; irun++){
@@ -53,13 +53,13 @@ void distribution::DataDist(data& D){
 	// now normalize to get a distribution
 	for (unsigned i = 0; i < ny; i++)
 		for (unsigned j = 0; j < nphi; j++)
-			d[i][j] /= D.NParticles;
+			d[i][j] /= pnum;
 }
 
 void distribution::DataDist(data& D, int type, int charge, bool meson){
 
 	double rapidity, angle;
-	int ybin, phibin;
+	int ybin, phibin, pnum = D.NumberOfParticles();
 
 	for(int isub = 0; isub < D.ISUBS; isub++){
 		for(int irun = 0; irun < D.NUM; irun++){
@@ -84,7 +84,7 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 	// now normalize to get a distribution
 	for (unsigned i = 0; i < ny; i++)
 		for (unsigned j = 0; j < nphi; j++)
-			d[i][j] /= D.NParticles;
+			d[i][j] /= pnum;
 }
 
 void distribution::DistTransform(double rapidity){

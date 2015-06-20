@@ -20,7 +20,7 @@ int main(int argc, char **argv){
 	//
 
 	std::ifstream s(argv[3]);
-	data D(s, HSD_VER_COORD);
+	data D(s, HSD_VER_PHSD);
 	s.close();
 	// mesons
 	{
@@ -39,12 +39,13 @@ int main(int argc, char **argv){
 		s.close();
 	}
 
-	D.report_pnum(std::cout);
+	std::cout << "Read in " << D.NumberOfParticles() << " particles"
+		  << std::endl;
 
 	std::cout << "<P_x>, for P_z > 0 : " << MeanPx(D, true)
 		  << "\n<P_x>, for P_z < 0 : " << MeanPx(D, false) << "\n";
 
-	distribution dst(25, 100);
+	distribution dst(50, 100);
 	dst.DataDist(D);
 	dst.DistTransform(0.5);
 	dst.PrintFlows(std::cout);

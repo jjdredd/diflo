@@ -71,7 +71,7 @@ public:
 	HSDVersion hsd_ver;
 	data(std::ifstream &s, HSDVersion v);
 	~data();
-	void report_pnum(std::ostream &os);
+	unsigned NumberOfParticles();
 	void readin_particles(std::ifstream &s, bool mesons);
 
 private:
