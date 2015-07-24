@@ -68,13 +68,13 @@ public:
 	int ISUBS, NUM, A;
 	double Elab, Time, NParticles;
 	event **P;
-	HSDVersion hsd_ver;
 	data(std::ifstream &s, HSDVersion v);
 	~data();
 	unsigned NumberOfParticles();
 	void readin_particles(std::ifstream &s, bool mesons);
 
 private:
+	HSDVersion hsd_ver;
 	bool parse_input_line(char *str, int *isub, int *irun, particle *p);
 
 };
