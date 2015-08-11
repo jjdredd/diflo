@@ -56,26 +56,52 @@ struct event {
 // represents a whole set of input data
 //
 
-enum HSDVersion {
+enum DataVersion {
 	HSD_VER_ORIG,
 	HSD_VER_COORD,
-	HSD_VER_PHSD
+	HSD_VER_PHSD,
+	ALICE_GUYS,
+	ROGACH
 };
 
 class data {
 
 public:
-	int ISUBS, NUM, A;
-	double Elab, Time, NParticles;
+	unsigned ISUBS, NUM, A, NParticles;
+	double Elab, Time;
 	event **P;
-	data(std::ifstream &s, HSDVersion v);
+	data(std::ifstream &s, DataVersion v);
 	~data();
 	unsigned NumberOfParticles();
 	void readin_particles(std::ifstream &s, bool mesons);
 
 private:
-	HSDVersion hsd_ver;
+	DataVersion hsd_ver;
 	bool parse_input_line(char *str, int *isub, int *irun, particle *p);
+
+};
+
+
+//
+// another class to represent data simple input
+//
+
+
+class DataSIn {
+
+public:
+	unsigned NParticles;
+	std::vector<event> Events;
+	DataSIn();
+	~DataSIn();
+	bool FetchEvent(std::ifstream &s, event &e);
+	void readin_data(std::ifstream &s);
+
+private:
+	DataVersion dat_ver;
+	int parse_input_line(char *str, unsigned &e_num, particle *p);
+	unsigned EventNum, sub, run;
+	particle p;		// to store particle from the next event
 
 };
 

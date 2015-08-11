@@ -59,7 +59,7 @@ unsigned int event::particle_count(){
 // data class
 //
 
-data::data(std::ifstream &s, HSDVersion v) : hsd_ver(v) {
+data::data(std::ifstream &s, DataVersion v) : hsd_ver(v) {
 	char str[128];
 	int n;
 	// read input
@@ -76,11 +76,11 @@ data::data(std::ifstream &s, HSDVersion v) : hsd_ver(v) {
 	sscanf(str, "%lf", &Time);
 
 	P = new event* [ISUBS];
-	for(int i = 0; i < ISUBS; i++) P[i] = new event[NUM];
+	for(unsigned i = 0; i < ISUBS; i++) P[i] = new event[NUM];
 }
 
 data::~data(){
-	for(int i = 0; i < ISUBS; i++)
+	for(unsigned i = 0; i < ISUBS; i++)
 		delete[] P[i];
 	delete[] P;
 }
@@ -113,7 +113,7 @@ bool data::parse_input_line(char *str, int *isub, int *irun, particle *p){
 	default:		// must be empty
 
 		// TODO: for PHSD output format
-		std::cerr << "HSD_VER_PHSD not implemented, exiting!\n";
+		std::cerr << "DataVersion not implemented, exiting!\n";
 		return false;
 	}
 }
@@ -129,7 +129,7 @@ void data::readin_particles(std::ifstream &s, bool mesons){
 		isub--; irun--;
 		ptcl.meson = mesons;
 		P[isub][irun].add_particle(ptcl);
-		NParticles += 1.0;
+		NParticles += 1;
 		s.getline(str, 256);
 	}
 	return;
@@ -137,10 +137,71 @@ void data::readin_particles(std::ifstream &s, bool mesons){
 
 unsigned data::NumberOfParticles(){
 	unsigned totnum = 0;
-	for(int isub = 0; isub < ISUBS; isub++){
-		for(int irun = 0; irun < NUM; irun++){
+	for(unsigned isub = 0; isub < ISUBS; isub++){
+		for(unsigned irun = 0; irun < NUM; irun++){
 			totnum += P[isub][irun].particle_count();
 		}
 	}
 	return totnum;
+}
+
+
+//
+// DataSIn class
+//
+
+
+DataSIn::DataSIn() : EventNum(0), isub(0), irun(0) {}
+
+DataSIn::~DataSIn(){}
+
+int DataSIn::parse_input_line(char *str, particle *p){
+
+	int unk;
+
+	switch(dat_ver) {
+
+	case HSD_VER_ORIG:
+		if (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
+			   "\t%lf\n", &p->type, &p->charge, isub, irun,
+			   &p->Px, &p->Py, &p->Pz, &p->P0, &p->b) == 9){}
+
+	case HSD_VER_COORD:
+		if (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
+			   "\t%lf\t%lf\t%lf\t%lf\n",
+			   &p->type, &p->charge, isub, irun,
+			   &p->Px, &p->Py, &p->Pz, &p->P0,
+			   &p->b, &p->x, &p->y, &p->z) == 12){
+
+			if (isub != sub || irun != run) return EventNum + 1;
+			else return EventNum;
+
+		} else return -1;
+
+	case HSD_VER_PHSD:
+		if (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
+			   "\t%lf\t%i\n",
+			   &p->type, &p->charge, isub, irun,
+			   &p->Px, &p->Py, &p->Pz, &p->P0,
+			   &p->b, &unk) == 10 ){}
+
+	case ALICE_GUYS:
+
+	case ROGACH:
+
+	default:		// must be empty
+
+		// TODO: for PHSD output format
+		std::cerr << "DataVersion not implemented, exiting!\n";
+		return false;
+	}
+
+}
+
+bool DataSIn::FetchEvent(std::ifstream &s, event &e){
+
+}
+
+void DataSIn::readin_data(std::ifstream &s){
+
 }
