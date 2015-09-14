@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <cstdio>
-#include <cmath>
+
 #include <gsl/gsl_statistics_double.h>
 /* HSD and PHSD seem to have slightly different output formats,
  * to take this into account, a PHSD preprocessor variable is used */

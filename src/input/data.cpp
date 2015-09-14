@@ -38,6 +38,60 @@ bool particle::of_type(int t, int c, bool m){
 	return (m == meson) && (c == charge) && (t == type);
 }
 
+int particle::octant(){
+	if( p->Px > 0 ){
+		if( p->Py > 0 ){
+			if( p->Pz > 0 ) return 0;
+			else return 1;
+		}
+		else{
+			if( p->Pz > 0 ) return 2;
+			else return 3;
+		}
+	}
+	else{
+		if( p->Py > 0 ){
+			if( p->Pz > 0 ) return 4;
+			else return 5;
+		}
+		else{
+			if( p->Pz > 0 ) return 6;
+			else return 7;
+		}
+	} 
+}
+
+double dotprod(particle &p1, particle &p2){
+	return (p1.Px * p2.Px + p1.Py * p2.Py + p1.Pz * p2.Pz);
+}
+
+double dist(particle &p1, particle &p2){
+	struct particle p;
+	p.Px = p1.Px - p2.Px;
+	p.Py = p1.Py - p2.Py;
+	p.Pz = p1.Pz - p2.Pz;
+	return p.p();
+}
+
+/* accepts sorted array */
+double mixprod(particle **p){
+	struct particle r;
+	r.Px = p[1]->Py*p[0]->Pz - p[1]->Pz*p[0]->Py;
+	r.Py = p[1]->Pz*p[0]->Px - p[1]->Px*p[0]->Pz;
+	r.Pz = p[1]->Px*p[0]->Py - p[1]->Py*p[0]->Px;
+	return dotprod(p[2], &r);
+}
+
+int pcompare(particle &a, particle &b){
+	double c = dotprod(a, a) - dotprod(b, b);
+	if(c > 0) return 1;
+	else{
+		if(c < 0) return -1;
+		else return 0;
+	}
+}
+
+
 //
 // event
 //

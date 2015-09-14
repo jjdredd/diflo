@@ -30,11 +30,18 @@ struct particle {
 	~particle();
 
 	bool operator==(double *p);
+	int octant();
 	double rapid();
 	double aangle();
 	double p();
 	bool of_type(int t, int c, bool m);
 };
+
+inline double dotprod(particle &, particle &);
+double dist(particle &, particle &);
+double mixprod(particle **);
+int pcompare(particle &a, particle &b);
+
 
 //
 // struct event
