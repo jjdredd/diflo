@@ -13,10 +13,11 @@ static bool momemtum_test(particle &a, particle &b, particle &c){
  * of particle triplet combinations that were used to calculate etas */
 void EventEta(event &e, std::vector<double> &etas,
 	      std::vector<unsigned> &comb_num){
-	struct particle *arp[3];
+
 	double eta[8], abseta[8], mxpr;
 	unsigned oct, i, j, k;
 	std::vector<particle> p = e.particles;
+	unsigned n = p.size();
 	memset(eta, 0, sizeof(eta));
 	memset(abseta, 0, sizeof(abseta));
 	comb_num.assign(8, 0);
@@ -26,7 +27,7 @@ void EventEta(event &e, std::vector<double> &etas,
 
 	/* traverse all particles in this
 	 * event (isub, inum) */
-	for ( i = 0; i < n; i++){
+	for (i = 0; i < n; i++){
 		oct = p[i].octant();
 		for( j = i + 1; j < n; j++){
 			if(oct != p[j].octant()) continue;

@@ -38,10 +38,10 @@ struct particle {
 	bool of_type(int t, int c, bool m);
 };
 
-inline double dotprod(particle &, particle &);
-double dist(particle &, particle &);
-double mixprod(particle &, particle &, particle &);
-int pcompare(particle &, particle &);
+inline double dotprod(const particle &, const particle &);
+double dist(const particle &, const particle &);
+double mixprod(const particle &, const particle &, const particle &);
+bool pcompare(const particle, const particle);
 
 
 //
@@ -89,6 +89,7 @@ private:
 
 };
 
+#if 0
 
 //
 // another class to represent data simple input
@@ -108,9 +109,11 @@ public:
 private:
 	DataVersion dat_ver;
 	int parse_input_line(char *str, unsigned &e_num, particle *p);
-	unsigned EventNum, sub, run;
+	unsigned EventNum, isub, irun;
 	particle p;		// to store particle from the next event
 
 };
+
+#endif	// comment out DataSIn class
 
 #endif	// DATA_HPP

@@ -39,33 +39,33 @@ bool particle::of_type(int t, int c, bool m){
 }
 
 unsigned particle::octant(){
-	if( p->Px > 0 ){
-		if( p->Py > 0 ){
-			if( p->Pz > 0 ) return 0;
+	if( Px > 0 ){
+		if( Py > 0 ){
+			if( Pz > 0 ) return 0;
 			else return 1;
 		}
 		else{
-			if( p->Pz > 0 ) return 2;
+			if( Pz > 0 ) return 2;
 			else return 3;
 		}
 	}
 	else{
-		if( p->Py > 0 ){
-			if( p->Pz > 0 ) return 4;
+		if( Py > 0 ){
+			if( Pz > 0 ) return 4;
 			else return 5;
 		}
 		else{
-			if( p->Pz > 0 ) return 6;
+			if( Pz > 0 ) return 6;
 			else return 7;
 		}
 	} 
 }
 
-double dotprod(particle &p1, particle &p2){
+double dotprod(const particle &p1, const particle &p2){
 	return (p1.Px * p2.Px + p1.Py * p2.Py + p1.Pz * p2.Pz);
 }
 
-double dist(particle &p1, particle &p2){
+double dist(const particle &p1, const particle &p2){
 	struct particle p;
 	p.Px = p1.Px - p2.Px;
 	p.Py = p1.Py - p2.Py;
@@ -74,7 +74,7 @@ double dist(particle &p1, particle &p2){
 }
 
 /* accepts sorted array */
-double mixprod(particle &a, particle &b, particle &c ){
+double mixprod(const particle &a, const particle &b, const particle &c ){
 	struct particle r;
 	r.Px = b.Py * a.Pz - b.Pz * a.Py;
 	r.Py = b.Pz * a.Px - b.Px * a.Pz;
@@ -82,7 +82,7 @@ double mixprod(particle &a, particle &b, particle &c ){
 	return dotprod(c, r);
 }
 
-bool pcompare(const particle &a, const particle &b){
+bool pcompare(const particle a, const particle b){
 	return dotprod(a, a) < dotprod(b, b);
 }
 
@@ -195,6 +195,9 @@ unsigned data::NumberOfParticles(){
 }
 
 
+
+#if 0
+
 //
 // DataSIn class
 //
@@ -254,3 +257,5 @@ bool DataSIn::FetchEvent(std::ifstream &s, event &e){
 void DataSIn::readin_data(std::ifstream &s){
 
 }
+
+#endif	// comment out DataSIn class

@@ -8,169 +8,14 @@
  * the Makefile.							     *
  *****************************************************************************/
 
-#include <iostream>
-#include <cstdio>
+#include "handedness.hpp"
+#include "data.hpp"
 
+#include <cmath>
 #include <gsl/gsl_statistics_double.h>
 /* HSD and PHSD seem to have slightly different output formats,
  * to take this into account, a PHSD preprocessor variable is used */
 /* #define PHSD */
-#define MIN_DIST 1.0
-#define MAX_DIST 1.0
-#define MOMDIST 0		/* if zero skip momentum test */
-#define norm(a) sqrt(dotprod(a, a))
-
-struct particle {
-	double P[4]; 			/* 0 - E, 3 - Pz */
-	/* see hsd manual for the meaning and values of these variables */
-	int charge, isub, irun, type;
-};
-
-inline int is_pion_event(struct particle *p, int isub, int irun){
-	return ( (p->type == 1)
-		 && (p->isub == isub)
-		 && (p->irun == irun) );
-}
-
-int quadrant(struct particle *p){
-	if( p->P[1] > 0 ){
-		if( p->P[2] > 0 ){
-			if( p->P[3] > 0 ) return 0;
-			else return 1;
-		}
-		else{
-			if( p->P[3] > 0 ) return 2;
-			else return 3;
-		}
-	}
-	else{
-		if( p->P[2] > 0 ){
-			if( p->P[3] > 0 ) return 4;
-			else return 5;
-		}
-		else{
-			if( p->P[3] > 0 ) return 6;
-			else return 7;
-		}
-	} 
-}
-
-inline double dotprod( struct particle *p1, struct particle *p2){
-	double sdp = 0;
-	int i;
-	for( i = 1; i <=3; i++) sdp += p1->P[i]*p2->P[i]; 
-	return sdp;
-}
-
-inline double dist( struct particle *p1, struct particle *p2){
-	struct particle p;
-	int i;
-	for( i = 1; i <= 3; i++) p.P[i] = p1->P[i] - p2->P[i];
-	return norm(&p);
-}
-
-/* accepts sorted by inplace_3sort() array */
-double mixprod( struct particle **p){
-	struct particle r;
-	r.P[1] = p[1]->P[2]*p[0]->P[3] - p[1]->P[3]*p[0]->P[2];
-	r.P[2] = p[1]->P[3]*p[0]->P[1] - p[1]->P[1]*p[0]->P[3];
-	r.P[3] = p[1]->P[1]*p[0]->P[2] - p[1]->P[2]*p[0]->P[1];
-	return dotprod(p[2], &r);
-}
-
-int pcompare(struct particle *a, struct particle *b){
-	double c = dotprod(a, a) - dotprod(b, b);
-	if(c > 0) return 1;
-	else{
-		if(c < 0) return -1;
-		else return 0;
-	}
-}
-
-/* not used atm */
-void inplace_3sort(struct particle **arp){
-	int min, max, mid, i;		/* mid - hardest lane */
-	struct particle *p[3];
-	min = max = mid = 0;
-	for( i = 0; i < 3; i++){
-		if( norm(arp[i]) < norm(arp[min]) ) min = i;
-		if( norm(arp[i]) > norm(arp[max]) ) max = i;
-	}
-	/* find mid :) */
-	for( i = 0; i < 3; i++){
-		if( (i != min) && (i != max) ){
-			mid = i;
-			break;
-		}
-	}
-	/* in-place */
-	p[0] = arp[max];
-	p[1] = arp[mid];
-	p[2] = arp[min];
-	/* p[0] > p[1] > p[2] */
-	for( i = 0; i < 3; i++) arp[i] = p[i];
-	/* arp[0] > arp[1] > arp[2] */
-	return;
-}
-
-/* calculate eta for event consisting of n particles stored in p
- * write results in etas array (for 8 octants), writes the number
- * of particle triplet combinations that were used to calculate etas */
-void EventEta(particle *p, unsigned n, double *etas, unsigned *comb_num){
-	struct particle *arp[3];
-	double eta[8], abseta[8], mxpr;
-	unsigned oct, i, j, k;
-	memset(eta, 0, sizeof(eta));
-	memset(abseta, 0, sizeof(abseta));
-	memset(comb_num, 0, sizeof(comb_num));
-
-	qsort(p, n, sizeof(struct particle), &pcompare);
-
-	/* traverse all particles in this
-	 * event (isub, inum) */
-	for ( i = 0; i < n; i++){
-		oct = quadrant(&p[i]);
-		for( j = i + 1; j < n; j++){
-			if(oct != quadrant(&p[j])) {
-				continue;
-			}
-			for(k = j + 1; k < n; k++){
-				if(oct != quadrant(&p[k])){
-					continue;
-				}
-				/* first sort particles */
-				/* always i < j < k
-				 * -> if presorted then
-				 * p_i < p_j < p_k */
-				arp[0] = &p[k];
-				arp[1] = &p[j];
-				arp[2] = &p[i];
-
-				/* arp[0] > arp[1] > arp[2] */
-				/* continue if particles are
-				 * at wrong distance */
-				if(MOMDIST
-				   && ((dist(arp[2], arp[1]) > MAX_DIST)
-				       || (dist(arp[2], arp[0]) < MIN_DIST))) {
-					continue;
-				}
-
-				mxpr = mixprod(arp);
-				eta[oct] += mxpr;
-				abseta[oct] += fabs(mxpr);
-				comb_num[oct]++;
-			}
-		}
-	} /* end of particle loop */
-	/* update mean if we had particles
-	 * in octant and event */
-	for (oct = 0; oct < 8; oct++){
-		if (comb_num[oct]) {
-			etas[oct] = eta[oct] / abseta[oct];
-		}
-	}
-
-}
 
 int main(int argc, char** argv){
   
@@ -181,6 +26,32 @@ int main(int argc, char** argv){
 			"second arg input\n");
 		return -1;
 	}
+
+	std::ifstream s(argv[2]);
+	data D(s, HSD_VER_ORIG);
+	s.close();
+	// mesons
+	{
+		s.open(argv[1]);
+		if(s.is_open()) D.readin_particles(s, true);
+		// else std::cout << "Warning: couldn't open mesons file "
+		// 		   << argv[1] << '\n';
+		s.close();
+	}
+
+	std::vector<double> etas, evet;
+	std::vector<unsigned> evnm;
+	etas.reserve(D.ISUB * D.NUM);
+	evet.reserve(8);
+	evnm.reserve(8);
+	for(int isub = 0; isub < D.ISUBS; isub++){
+		for(int irun = 0; irun < D.NUM; irun++){
+
+		}
+	}
+
+
+#if 0
 	int j, k, oct, comb_num[8];
 	int every;
 	double **etas = NULL;
@@ -251,5 +122,8 @@ int main(int argc, char** argv){
 	free(all_particles);
 	time_t t2 = time(NULL);
 	printf("finished calculations and wrap-up in %li\n", t2 - t1);
+
+#endif	// comment out main
+
 	return 0;
 }

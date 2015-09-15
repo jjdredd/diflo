@@ -5,9 +5,15 @@ export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS)
 export CXXFLAGS = $(CFLAGS)
 export LDFLAGS = -lm
 INPUT_F = input/data.o
-ANALYS_F = analysis/fft.o analysis/dist.o analysis/momentum.o
+ANALYS_F = analysis/fft.o analysis/dist.o analysis/momentum.o \
+analysis/handedness.o
 
-all: diflo.elf diflo.server.elf64
+all: diflo.elf diflo.server.elf64 sdnopt.elf
+
+sdnopt.elf: sdnopt.cpp inputlib analysis
+	g++ $(CXXFLAGS) $(LDFLAGS) sdnopt.cpp \
+	$(INPUT_F) analysis/handedness.o \
+	-o sdnopt.elf
 
 multip.elf: multip.cpp
 	g++ $(CXXFLAGS) $(LDFLAGS) multip.cpp \
