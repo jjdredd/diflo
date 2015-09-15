@@ -38,7 +38,7 @@ bool particle::of_type(int t, int c, bool m){
 	return (m == meson) && (c == charge) && (t == type);
 }
 
-int particle::octant(){
+unsigned particle::octant(){
 	if( p->Px > 0 ){
 		if( p->Py > 0 ){
 			if( p->Pz > 0 ) return 0;
@@ -74,21 +74,16 @@ double dist(particle &p1, particle &p2){
 }
 
 /* accepts sorted array */
-double mixprod(particle **p){
+double mixprod(particle &a, particle &b, particle &c ){
 	struct particle r;
-	r.Px = p[1]->Py*p[0]->Pz - p[1]->Pz*p[0]->Py;
-	r.Py = p[1]->Pz*p[0]->Px - p[1]->Px*p[0]->Pz;
-	r.Pz = p[1]->Px*p[0]->Py - p[1]->Py*p[0]->Px;
-	return dotprod(p[2], &r);
+	r.Px = b.Py * a.Pz - b.Pz * a.Py;
+	r.Py = b.Pz * a.Px - b.Px * a.Pz;
+	r.Pz = b.Px * a.Py - b.Py * a.Px;
+	return dotprod(c, r);
 }
 
-int pcompare(particle &a, particle &b){
-	double c = dotprod(a, a) - dotprod(b, b);
-	if(c > 0) return 1;
-	else{
-		if(c < 0) return -1;
-		else return 0;
-	}
+bool pcompare(const particle &a, const particle &b){
+	return dotprod(a, a) < dotprod(b, b);
 }
 
 

@@ -1,5 +1,6 @@
 #ifndef DATA_HPP
 #define DATA_HPP
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -30,7 +31,7 @@ struct particle {
 	~particle();
 
 	bool operator==(double *p);
-	int octant();
+	unsigned octant();
 	double rapid();
 	double aangle();
 	double p();
@@ -39,8 +40,8 @@ struct particle {
 
 inline double dotprod(particle &, particle &);
 double dist(particle &, particle &);
-double mixprod(particle **);
-int pcompare(particle &a, particle &b);
+double mixprod(particle &, particle &, particle &);
+int pcompare(particle &, particle &);
 
 
 //
