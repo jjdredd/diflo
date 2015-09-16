@@ -108,7 +108,8 @@ unsigned int event::particle_count(){
 // data class
 //
 
-data::data(std::ifstream &s, DataVersion v) : hsd_ver(v) {
+data::data(std::ifstream &s, DataVersion v, bool pick = false, int type = 0)
+	: hsd_ver(v), pick(pick), type(type) {
 	char str[128];
 	int n;
 	// read input
@@ -176,9 +177,11 @@ void data::readin_particles(std::ifstream &s, bool mesons){
 	s.getline(str, 256);
 	while(parse_input_line(str, &isub, &irun, &ptcl) && (!s.eof())){
 		isub--; irun--;
-		ptcl.meson = mesons;
-		P[isub][irun].add_particle(ptcl);
-		NParticles += 1;
+		if (pick && type == ptcl.type) {
+			ptcl.meson = mesons;
+			P[isub][irun].add_particle(ptcl);
+			NParticles += 1;
+		}
 		s.getline(str, 256);
 	}
 	return;

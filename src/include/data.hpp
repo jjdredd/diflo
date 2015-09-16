@@ -78,13 +78,15 @@ public:
 	unsigned ISUBS, NUM, A, NParticles;
 	double Elab, Time;
 	event **P;
-	data(std::ifstream &s, DataVersion v);
+	data(std::ifstream &s, DataVersion v, bool, int);
 	~data();
 	unsigned NumberOfParticles();
 	void readin_particles(std::ifstream &s, bool mesons);
 
 private:
 	DataVersion hsd_ver;
+	int type, charge;
+	bool pick;
 	bool parse_input_line(char *str, int *isub, int *irun, particle *p);
 
 };
