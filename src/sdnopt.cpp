@@ -39,17 +39,31 @@ int main(int argc, char** argv){
 		s.close();
 	}
 
-	std::vector<double> etas, evet;
+	std::vector<double> etas[8], evet;
 	std::vector<unsigned> evnm;
-	etas.reserve(D.ISUB * D.NUM);
+	for(unsigned i = 0; i < 8; i++)
+		etas[i].reserve(D.ISUBS * D.NUM);
 	evet.reserve(8);
 	evnm.reserve(8);
-	for(int isub = 0; isub < D.ISUBS; isub++){
-		for(int irun = 0; irun < D.NUM; irun++){
-
+	for(unsigned isub = 0; isub < D.ISUBS; isub++){
+		for(unsigned irun = 0; irun < D.NUM; irun++){
+			EventEta(D.P[isub][irun], evet, evnm);
+			for(unsigned i = 0; i < 8; i++)
+				etas[i].push_back(evet[i]);
 		}
 	}
 
+	for(unsigned i = 0; i < 8; i++){
+		double rsn, mean, rsdm;
+		unsigned numevents = D.ISUBS * D.NUM;
+		rsn = 1/sqrt(numevents);
+		mean = gsl_stats_mean (&etas[i][0], 1, numevents);
+		rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
+					     numevents, mean);
+		std::cout << rsn << '\t' << 1.0/numevents
+			  << mean << '\t' << fabs(mean)
+			  << '\t' << rsdm << std::endl;
+	}
 
 #if 0
 	int j, k, oct, comb_num[8];

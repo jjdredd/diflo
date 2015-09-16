@@ -8,8 +8,11 @@ INPUT_F = input/data.o
 ANALYS_F = analysis/fft.o analysis/dist.o analysis/momentum.o \
 analysis/handedness.o
 
-all: diflo.elf diflo.server.elf64 sdnopt.elf
+all: diflo.elf sdnopt.elf multip.elf
 
+sdnopt.elf: CFLAGS += -I/home/ltph/usubov/usr/include
+sdnopt.elf: CXXFLAGS += -I/home/ltph/usubov/usr/include
+sdnopt.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
 sdnopt.elf: sdnopt.cpp inputlib analysis
 	g++ $(CXXFLAGS) $(LDFLAGS) sdnopt.cpp \
 	$(INPUT_F) analysis/handedness.o \
@@ -19,14 +22,8 @@ multip.elf: multip.cpp
 	g++ $(CXXFLAGS) $(LDFLAGS) multip.cpp \
 	$(INPUT_F) -o multip.elf
 
-diflo.server.elf64: CFLAGS += -msse4 -I/home/ltph/usubov/usr/include
-diflo.server.elf64: CXXFLAGS += -I/home/ltph/usubov/usr/include
-diflo.server.elf64: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
-diflo.server.elf64: diflo.cpp inputlib analys
-	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \
-	$(INPUT_F) $(ANALYS_F) \
-	-o diflo.server.elf64
-
+diflo.elf: CXXFLAGS += -I/home/ltph/usubov/usr/include
+diflo.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
 diflo.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
 diflo.elf: diflo.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) diflo.cpp \

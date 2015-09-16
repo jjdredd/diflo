@@ -11,6 +11,7 @@
 #define MAX_DIST 1.0
 #define MOMDIST 0		/* if zero skip momentum test */
 
-void EventEta(event &, double *, unsigned *);
+void EventEta(event &, std::vector<double> &, std::vector<unsigned> &);
+
 
 #endif	// HANDED_HPP
