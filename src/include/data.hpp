@@ -68,8 +68,6 @@ enum DataVersion {
 	HSD_VER_ORIG,
 	HSD_VER_COORD,
 	HSD_VER_PHSD,
-	ALICE_GUYS,
-	ROGACH
 };
 
 class data {
@@ -89,6 +87,26 @@ private:
 	bool pick;
 	bool parse_input_line(char *str, int *isub, int *irun, particle *p);
 
+};
+
+
+
+//
+// ALICE event fetcher
+//
+
+
+class ALICEData {
+
+public:
+	ALICEData(std::ifstream &);
+	~ALICEData();
+	event *FetchEvent();
+
+private:
+	unsigned cur_npart, cur_nev;
+	bool parse_hline(char *);
+	bool parse_line(char *, particle &);
 };
 
 #if 0
