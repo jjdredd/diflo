@@ -61,7 +61,7 @@ int main(int argc, char** argv){
 		rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
 					     numevents, mean);
 		std::cout << rsn << '\t' << 1.0/numevents
-			  << mean << '\t' << fabs(mean)
+			  << '\t' << mean << '\t' << fabs(mean)
 			  << '\t' << rsdm << std::endl;
 	}
 
