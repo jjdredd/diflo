@@ -13,7 +13,7 @@ all: diflo.elf sdnopt.elf multip.elf
 sdnopt.elf: CFLAGS += -I/home/ltph/usubov/usr/include
 sdnopt.elf: CXXFLAGS += -I/home/ltph/usubov/usr/include
 sdnopt.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
-sdnopt.elf: sdnopt.cpp inputlib analysis
+sdnopt.elf: sdnopt.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) sdnopt.cpp \
 	$(INPUT_F) analysis/handedness.o \
 	-o sdnopt.elf
