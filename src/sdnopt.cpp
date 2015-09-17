@@ -31,13 +31,15 @@ int main(int argc, char** argv){
 
 	ALICEData D(argv[1]);
 	event e;
-	while (D.FetchEvent(e)) {
+	unsigned NEvents = 0;
+	while (D.FetchNumEvent(e, 100, 200)) {
+		NEvents++;
 		EventEta(e, evet, evnm);
 		for(unsigned i = 0; i < 8; i++) {
 			etas[i].push_back(evet[i]);
 		}
 	}
-
+	std::cout << "using " << NEvents << " events\n";
 	for(unsigned i = 0; i < 8; i++){
 		double rsn, mean, rsdm;
 		unsigned numevents = etas[i].size();

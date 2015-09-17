@@ -102,6 +102,7 @@ public:
 	ALICEData(const char *);
 	~ALICEData();
 	bool FetchEvent(event &);
+	bool FetchNumEvent(event &, unsigned, unsigned);
 
 private:
 	unsigned cur_npart, cur_nev;
