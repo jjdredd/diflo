@@ -19,11 +19,10 @@
 
 int main(int argc, char** argv){
   
-	if (argc < 3){
+	if (argc < 2){
 		printf ("not enough arguments\n"
 			"usage:\n"
-			"first arg fort.301\n"
-			"second arg input\n");
+			"first arg input file\n");
 		return -1;
 	}
 
@@ -33,7 +32,7 @@ int main(int argc, char** argv){
 	evet.reserve(8);
 	evnm.reserve(8);
 
-	ALICEData D(argv[2]);
+	ALICEData D(argv[1]);
 	event e;
 	while (D.FetchEvent(e)) {
 		EventEta(e, evet, evnm);
