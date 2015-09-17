@@ -29,15 +29,13 @@ int main(int argc, char** argv){
 	std::vector<double> etas[8], evet;
 	std::vector<unsigned> evnm;
 
-	evet.reserve(8);
-	evnm.reserve(8);
-
 	ALICEData D(argv[1]);
 	event e;
 	while (D.FetchEvent(e)) {
 		EventEta(e, evet, evnm);
-		for(unsigned i = 0; i < 8; i++)
+		for(unsigned i = 0; i < 8; i++) {
 			etas[i].push_back(evet[i]);
+		}
 	}
 
 	for(unsigned i = 0; i < 8; i++){

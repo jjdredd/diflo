@@ -60,7 +60,7 @@ void EventEta(event &e, std::vector<double> &etas,
 	/* update mean if we had particles
 	 * in octant and event */
 	for (oct = 0; oct < 8; oct++){
-		if (comb_num[oct]) {
+		if (comb_num[oct] && eta[oct]) {
 			etas[oct] = eta[oct] / abseta[oct];
 		}
 	}
