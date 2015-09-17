@@ -6,8 +6,8 @@ double MeanPx(data& D, bool zdir){
 	double mpx = 0;
 	unsigned n = 0;
 
-	for(int isub = 0; isub < D.ISUBS; isub++){
-		for(int irun = 0; irun < D.NUM; irun++){
+	for(unsigned isub = 0; isub < D.ISUBS; isub++){
+		for(unsigned irun = 0; irun < D.NUM; irun++){
 			for(unsigned i = 0;
 			    i < D.P[isub][irun].particles.size(); i++){
 

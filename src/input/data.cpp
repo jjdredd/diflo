@@ -199,6 +199,41 @@ unsigned data::NumberOfParticles(){
 
 
 
+//
+// ALICE event fetcher
+//
+
+ALICEData::ALICEData(const char *file) : s(file) {}
+
+ALICEData::~ALICEData(){}
+
+bool ALICEData::parse_hline(char *str) {
+	return (sscanf(str, "%i\t%i\n", &cur_nev, &cur_npart) == 2);
+}
+
+bool ALICEData::parse_line(char *str, particle &p) {
+	int i;
+	return (sscanf(str, "%i\t%lf\t%lf\t%lf\n", &i, &p.Px, &p.Py, &p.Pz)
+		== 4);
+}
+
+bool ALICEData::FetchEvent(event &e){
+	particle p;
+	char str[256];
+	s.getline(str, 256);
+	if (!parse_hline(str)) return false;
+	e.particles.clear();
+	e.particles.reserve(cur_npart);
+	for (unsigned i = 0; i < cur_npart; i++) {
+		s.getline(str, 256);
+		if (!parse_line(str, p)) return false;
+		e.add_particle(p);
+	}
+	return true;
+}
+
+
+
 #if 0
 
 //

@@ -34,8 +34,8 @@ void distribution::DataDist(data& D){
 	double rapidity, angle;
 	unsigned ybin, phibin, pnum = D.NumberOfParticles();
 
-	for(int isub = 0; isub < D.ISUBS; isub++){
-		for(int irun = 0; irun < D.NUM; irun++){
+	for(unsigned isub = 0; isub < D.ISUBS; isub++){
+		for(unsigned irun = 0; irun < D.NUM; irun++){
 			for(unsigned i = 0;
 			    i < D.P[isub][irun].particles.size(); i++){
 
@@ -61,8 +61,8 @@ void distribution::DataDist(data& D, int type, int charge, bool meson){
 	double rapidity, angle;
 	int ybin, phibin, pnum = D.NumberOfParticles();
 
-	for(int isub = 0; isub < D.ISUBS; isub++){
-		for(int irun = 0; irun < D.NUM; irun++){
+	for(unsigned isub = 0; isub < D.ISUBS; isub++){
+		for(unsigned irun = 0; irun < D.NUM; irun++){
 			for(unsigned i = 0;
 			    i < D.P[isub][irun].particles.size(); i++){
 

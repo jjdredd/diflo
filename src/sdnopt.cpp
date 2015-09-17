@@ -27,6 +27,34 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
+	std::vector<double> etas[8], evet;
+	std::vector<unsigned> evnm;
+
+	evet.reserve(8);
+	evnm.reserve(8);
+
+	ALICEData D(argv[2]);
+	event e;
+	while (D.FetchEvent(e)) {
+		EventEta(e, evet, evnm);
+		for(unsigned i = 0; i < 8; i++)
+			etas[i].push_back(evet[i]);
+	}
+
+	for(unsigned i = 0; i < 8; i++){
+		double rsn, mean, rsdm;
+		unsigned numevents = etas[i].size();
+		rsn = 1/sqrt(numevents);
+		mean = gsl_stats_mean (&etas[i][0], 1, numevents);
+		rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
+					     numevents, mean);
+		std::cout << rsn << '\t' << 1.0/numevents
+			  << '\t' << mean << '\t' << fabs(mean)
+			  << '\t' << rsdm << std::endl;
+	}
+
+
+#if 0				// this is for HSD
 	std::ifstream s(argv[2]);
 	data D(s, HSD_VER_ORIG, true, 1);
 	s.close();
@@ -38,9 +66,6 @@ int main(int argc, char** argv){
 		// 		   << argv[1] << '\n';
 		s.close();
 	}
-
-	std::vector<double> etas[8], evet;
-	std::vector<unsigned> evnm;
 	for(unsigned i = 0; i < 8; i++)
 		etas[i].reserve(D.ISUBS * D.NUM);
 	evet.reserve(8);
@@ -64,8 +89,9 @@ int main(int argc, char** argv){
 			  << '\t' << mean << '\t' << fabs(mean)
 			  << '\t' << rsdm << std::endl;
 	}
+#endif	// end of testing code for HSD data
 
-#if 0
+#if 0				// old code for reference
 	int j, k, oct, comb_num[8];
 	int every;
 	double **etas = NULL;

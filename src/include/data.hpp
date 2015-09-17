@@ -99,12 +99,13 @@ private:
 class ALICEData {
 
 public:
-	ALICEData(std::ifstream &);
+	ALICEData(const char *);
 	~ALICEData();
-	event *FetchEvent();
+	bool FetchEvent(event &);
 
 private:
 	unsigned cur_npart, cur_nev;
+	std::ifstream s;
 	bool parse_hline(char *);
 	bool parse_line(char *, particle &);
 };
