@@ -13,6 +13,10 @@
 
 #include <cmath>
 #include <gsl/gsl_statistics_double.h>
+
+#include <fstream>
+#include <string>
+#include <sstream>
 /* HSD and PHSD seem to have slightly different output formats,
  * to take this into account, a PHSD preprocessor variable is used */
 /* #define PHSD */
@@ -26,32 +30,39 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
-	std::vector<double> etas[8], evet;
-	std::vector<unsigned> evnm;
+	std::ofstream files[8];
+	for (unsigned i = 0; i < 8; i++) {
+		std::string name = "res/oct_multip_" + std::to_string(i);
+		files[i].open(name, std::ofstream::out);
+	}
 
-	ALICEData D(argv[1]);
-	event e;
-	unsigned NEvents = 0;
-	while (D.FetchNumEvent(e, 100, 200)) {
-		NEvents++;
-		EventEta(e, evet, evnm);
-		for(unsigned i = 0; i < 8; i++) {
-			etas[i].push_back(evet[i]);
+	unsigned w = 50;
+	for (unsigned start = 50; start < 600; start += w) {
+		std::vector<double> etas[8], evet;
+		std::vector<unsigned> evnm;
+
+		ALICEData D(argv[1]);
+		event e;
+
+		while (D.FetchNumEvent(e, start, start + w)) {
+			EventEta(e, evet, evnm);
+			for(unsigned i = 0; i < 8; i++) {
+				etas[i].push_back(evet[i]);
+			}
+		}
+
+		for(unsigned i = 0; i < 8; i++){
+			double rsn, mean, rsdm;
+			unsigned numevents = etas[i].size();
+			rsn = 1/sqrt(numevents);
+			mean = gsl_stats_mean (&etas[i][0], 1, numevents);
+			rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
+						     numevents, mean);
+			files[i] << rsn << '\t' << start
+				 << '\t' << mean
+				 << '\t' << rsdm << std::endl;
 		}
 	}
-	std::cout << "using " << NEvents << " events\n";
-	for(unsigned i = 0; i < 8; i++){
-		double rsn, mean, rsdm;
-		unsigned numevents = etas[i].size();
-		rsn = 1/sqrt(numevents);
-		mean = gsl_stats_mean (&etas[i][0], 1, numevents);
-		rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
-					     numevents, mean);
-		std::cout << rsn << '\t' << 1.0/numevents
-			  << '\t' << mean << '\t' << fabs(mean)
-			  << '\t' << rsdm << std::endl;
-	}
-
 
 #if 0				// this is for HSD
 	std::ifstream s(argv[2]);
@@ -89,80 +100,6 @@ int main(int argc, char** argv){
 			  << '\t' << rsdm << std::endl;
 	}
 #endif	// end of testing code for HSD data
-
-#if 0				// old code for reference
-	int j, k, oct, comb_num[8];
-	int every;
-	double **etas = NULL;
-
-	etas = malloc(8 * sizeof(double));
-	for (i = 0; i < 8; i++)
-		etas[i] = calloc(ISUB * NUM, sizeof(double));
-
-	for (isub = 0; isub < ISUB; isub++){
-		for (irun = 0; irun < NUM; irun++){
-			double 
-		}
-	} /* end of event loop for this event set */
-
-	for (every = 1; every < EVERY_MAX; every++){
-		int numevents = NUM*( (ISUB - 1)/every + 1);
-		/* more convenient to first calculate then write */
-		double corr[8][8];
-		for (oct = 0; oct < 8; oct++){
-			sprintf (s, "res/out_oct_%i", oct);
-			FILE *fout = fopen(s, "a+");
-			rsn = 1/sqrt(numevents);
-			mean = gsl_stats_mean (etas[oct], every, NUM * ISUB);
-			rsdm = rsn * gsl_stats_sd_m (etas[oct], every,
-						     NUM * ISUB, mean);
-			fprintf (fout, "%.9f\t%.9f\t%.9f\t%.9f\t%.9f\n",
-				 rsn, 1.0/numevents,
-				 mean, fabs(mean), rsdm);
-			fclose(fout);
-			/* correlations of the same octant are 1 by definition
-			 * so no need to calculate them. set them to
-			 * zero so we don't
-			 * have problems with plot scaling */
-			corr[oct][oct] = 0;
-			for (i = oct + 1; i < 8; i++){
-				corr[i][oct]
-					= corr[oct][i]
-					= gsl_stats_correlation (etas[oct],
-								 every,
-								 etas[i],
-								 every,
-								 NUM * ISUB);
-			}
-		}
-		sprintf (s, "res/out_cor_every_%i", every);
-		FILE *fcor = fopen (s, "a+");
-		for (oct = 0; oct < 8; oct++){
-			for (i = 0; i < 8; i++){
-				fprintf (fcor, "%.9f\t", corr[oct][i]);
-			}
-			fprintf(fcor, "\n");
-		}
-		fclose (fcor);
-	} /* end of "every" event set loop */
-	/* this can be done earlier? */
-	for( isub = 0; isub < ISUB; isub++){
-		for( irun = 0; irun < NUM; irun++){
-			free( all_particles[isub][irun] );
-		}
-		free(all_particles[isub]);
-		free(pcnt[isub]);
-		free (psz[isub]);
-	}
-	for (i = 0; i < 8; i++) free(etas[i]);
-	free(etas);
-	free(pcnt);
-	free (psz);
-	free(all_particles);
-	time_t t2 = time(NULL);
-	printf("finished calculations and wrap-up in %li\n", t2 - t1);
-
-#endif	// comment out main
 
 	return 0;
 }
