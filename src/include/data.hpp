@@ -16,9 +16,11 @@
 #define THRES 0.0001		// comparison threshold
 #define MPROT 0.938		// proton mass
 
+#define RPAngle 0.0
+
 struct particle {
 
-	double x, y, z, Px, Py, Pz, P0, b, RPAngle;
+	double x, y, z, Px, Py, Pz, P0, b;
 	int type, charge;
 	bool meson;
 
@@ -31,6 +33,7 @@ struct particle {
 	~particle();
 
 	bool operator==(double *p);
+	// move these to handedness analysis
 	unsigned octant();
 	unsigned diant();
 	double rapid();

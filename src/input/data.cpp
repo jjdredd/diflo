@@ -5,13 +5,13 @@
 // particle
 //
 
-particle::particle() : RPAngle(0) {}
+particle::particle() {}
 
 particle::particle(double x, double y, double z, double Px,
 		   double Py, double Pz, double P0, double b,
 		   int type, int charge, bool meson)
 	: x(x), y(y), z(z), Px(Px), Py(Py), Pz(Pz), P0(P0), b(b),
-	  type(type), charge(charge), meson(meson), RPAngle(0) {}
+	  type(type), charge(charge), meson(meson) {}
 
 particle::~particle(){}
 
