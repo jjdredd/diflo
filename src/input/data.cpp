@@ -5,13 +5,13 @@
 // particle
 //
 
-particle::particle(){}
+particle::particle() : RPAngle(0) {}
 
 particle::particle(double x, double y, double z, double Px,
 		   double Py, double Pz, double P0, double b,
 		   int type, int charge, bool meson)
 	: x(x), y(y), z(z), Px(Px), Py(Py), Pz(Pz), P0(P0), b(b),
-	  type(type), charge(charge), meson(meson){}
+	  type(type), charge(charge), meson(meson), RPAngle(0) {}
 
 particle::~particle(){}
 
@@ -59,6 +59,11 @@ unsigned particle::octant(){
 			else return 7;
 		}
 	} 
+}
+
+unsigned particle::diant() {
+	if ((-Px*tan(RPAngle) + Py) > 0) return 0;
+	else return 1;
 }
 
 double dotprod(const particle &p1, const particle &p2){

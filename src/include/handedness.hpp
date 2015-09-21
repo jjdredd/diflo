@@ -11,6 +11,8 @@
 #define MAX_DIST 1.0
 #define MOMDIST 0		/* if zero skip momentum test */
 
+#define SubVolume(p) p.diant()	// choose a volume partition function
+
 void EventEta(event &, std::vector<double> &, std::vector<unsigned> &);
 
 

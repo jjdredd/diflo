@@ -30,6 +30,8 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
+
+#if 0
 	std::ofstream files[8];
 	for (unsigned i = 0; i < 8; i++) {
 		std::string name = "res/oct_multip_" + std::to_string(i);
@@ -64,7 +66,7 @@ int main(int argc, char** argv){
 		}
 	}
 
-#if 0				// this is for HSD
+#else				// this is for HSD
 	std::ifstream s(argv[2]);
 	data D(s, HSD_VER_ORIG, true, 1);
 	s.close();
@@ -76,29 +78,37 @@ int main(int argc, char** argv){
 		// 		   << argv[1] << '\n';
 		s.close();
 	}
-	for(unsigned i = 0; i < 8; i++)
-		etas[i].reserve(D.ISUBS * D.NUM);
-	evet.reserve(8);
-	evnm.reserve(8);
+	std::vector<double> etas[2], evet;
+	std::vector<unsigned> evnm;
+
+	etas[0].reserve(D.ISUBS * D.NUM);
+	etas[1].reserve(D.ISUBS * D.NUM);
+	evet.reserve(2);
+	evnm.reserve(2);
 	for(unsigned isub = 0; isub < D.ISUBS; isub++){
 		for(unsigned irun = 0; irun < D.NUM; irun++){
 			EventEta(D.P[isub][irun], evet, evnm);
-			for(unsigned i = 0; i < 8; i++)
-				etas[i].push_back(evet[i]);
+			etas[0].push_back(evet[0]);
+			etas[1].push_back(evet[1]);
 		}
 	}
 
-	for(unsigned i = 0; i < 8; i++){
+	for(unsigned i = 0; i < 2; i++){
 		double rsn, mean, rsdm;
 		unsigned numevents = D.ISUBS * D.NUM;
 		rsn = 1/sqrt(numevents);
 		mean = gsl_stats_mean (&etas[i][0], 1, numevents);
 		rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
 					     numevents, mean);
-		std::cout << rsn << '\t' << 1.0/numevents
-			  << '\t' << mean << '\t' << fabs(mean)
+		std::cout << rsn << '\t' << mean
 			  << '\t' << rsdm << std::endl;
 	}
+	std::cout << "Correlation: "
+		  << gsl_stats_correlation (&etas[0][0], 1, &etas[1][0], 1,
+					    D.NUM * D.ISUBS)
+		  << std::endl;
+
+
 #endif	// end of testing code for HSD data
 
 	return 0;

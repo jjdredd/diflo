@@ -18,7 +18,7 @@
 
 struct particle {
 
-	double x, y, z, Px, Py, Pz, P0, b;
+	double x, y, z, Px, Py, Pz, P0, b, RPAngle;
 	int type, charge;
 	bool meson;
 
@@ -32,6 +32,7 @@ struct particle {
 
 	bool operator==(double *p);
 	unsigned octant();
+	unsigned diant();
 	double rapid();
 	double aangle();
 	double p();

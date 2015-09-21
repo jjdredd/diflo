@@ -28,11 +28,11 @@ void EventEta(event &e, std::vector<double> &etas,
 	/* traverse all particles in this
 	 * event (isub, inum) */
 	for (i = 0; i < n; i++){
-		oct = p[i].octant();
+		oct = SubVolume(p[i]);
 		for( j = i + 1; j < n; j++){
-			if(oct != p[j].octant()) continue;
+			if(oct != SubVolume(p[j])) continue;
 			for(k = j + 1; k < n; k++){
-				if(oct != p[k].octant()) continue;
+				if(oct != SubVolume(p[k])) continue;
 				/* first sort particles */
 				/* always i < j < k
 				 * -> if presorted then
