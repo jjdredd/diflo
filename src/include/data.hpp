@@ -12,11 +12,8 @@
 // to represent a single particle
 //
 
-
 #define THRES 0.0001		// comparison threshold
 #define MPROT 0.938		// proton mass
-
-#define RPAngle 0.0
 
 struct particle {
 
@@ -33,9 +30,6 @@ struct particle {
 	~particle();
 
 	bool operator==(double *p);
-	// move these to handedness analysis
-	unsigned octant();
-	unsigned diant();
 	double rapid();
 	double aangle();
 	double p();

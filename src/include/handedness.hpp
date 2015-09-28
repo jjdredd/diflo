@@ -10,8 +10,13 @@
 #define MIN_DIST 1.0
 #define MAX_DIST 1.0
 #define MOMDIST 0		/* if zero skip momentum test */
+#define RPAngle 0.0		// angle of the reaction plane
 
-#define SubVolume(p) p.diant()	// choose a volume partition function
+#define SubVolume(p) diant(p)	// choose a volume partition function
+
+unsigned octant(particle &);
+unsigned diant(particle &);
+
 
 void EventEta(event &, std::vector<double> &, std::vector<unsigned> &);
 

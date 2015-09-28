@@ -8,6 +8,36 @@ static bool momemtum_test(particle &a, particle &b, particle &c){
 }
 #endif
 
+// determine the octant in momentum space
+unsigned octant(particle &p){
+	if (p.Px > 0){
+		if (p.Py > 0){
+			if (p.Pz > 0) return 0;
+			else return 1;
+		}
+		else{
+			if (p.Pz > 0) return 2;
+			else return 3;
+		}
+	}
+	else{
+		if (p.Py > 0){
+			if (p.Pz > 0) return 4;
+			else return 5;
+		}
+		else{
+			if (p.Pz > 0) return 6;
+			else return 7;
+		}
+	} 
+}
+
+unsigned diant(particle &p) {
+	if ((-p.Px*tan(RPAngle) + p.Py) > 0) return 0;
+	else return 1;
+}
+
+
 /* calculate eta for event consisting of n particles stored in p
  * write results in etas array (for 8 octants), writes the number
  * of particle triplet combinations that were used to calculate etas */

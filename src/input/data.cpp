@@ -38,34 +38,6 @@ bool particle::of_type(int t, int c, bool m){
 	return (m == meson) && (c == charge) && (t == type);
 }
 
-unsigned particle::octant(){
-	if( Px > 0 ){
-		if( Py > 0 ){
-			if( Pz > 0 ) return 0;
-			else return 1;
-		}
-		else{
-			if( Pz > 0 ) return 2;
-			else return 3;
-		}
-	}
-	else{
-		if( Py > 0 ){
-			if( Pz > 0 ) return 4;
-			else return 5;
-		}
-		else{
-			if( Pz > 0 ) return 6;
-			else return 7;
-		}
-	} 
-}
-
-unsigned particle::diant() {
-	if ((-Px*tan(RPAngle) + Py) > 0) return 0;
-	else return 1;
-}
-
 double dotprod(const particle &p1, const particle &p2){
 	return (p1.Px * p2.Px + p1.Py * p2.Py + p1.Pz * p2.Pz);
 }
