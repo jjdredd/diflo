@@ -85,9 +85,11 @@ int main(int argc, char** argv){
 	etas[1].reserve(D.ISUBS * D.NUM);
 	evet.reserve(2);
 	evnm.reserve(2);
+
+#if 0
 	for(unsigned isub = 0; isub < D.ISUBS; isub++){
 		for(unsigned irun = 0; irun < D.NUM; irun++){
-			EventEta(D.P[isub][irun], evet, evnm);
+			EventEta(D.P[isub][irun], evet, evnm, rpa);
 			etas[0].push_back(evet[0]);
 			etas[1].push_back(evet[1]);
 		}
@@ -107,7 +109,32 @@ int main(int argc, char** argv){
 		  << gsl_stats_correlation (&etas[0][0], 1, &etas[1][0], 1,
 					    D.NUM * D.ISUBS)
 		  << std::endl;
+#endif	// end of old calc code
 
+	std::ofstream fout("res_vs_rpa.txt");
+	for(double rpa = 0; rpa < M_PI; rpa += 0.4) {
+		for(unsigned isub = 0; isub < D.ISUBS; isub++){
+			for(unsigned irun = 0; irun < D.NUM; irun++){
+				EventEta(D.P[isub][irun], evet, evnm, rpa);
+				etas[0].push_back(evet[0]);
+				etas[1].push_back(evet[1]);
+			}
+		}
+
+		for(unsigned i = 0; i < 2; i++){
+			double rsn, mean, rsdm;
+			unsigned numevents = D.ISUBS * D.NUM;
+			rsn = 1/sqrt(numevents);
+			mean = gsl_stats_mean (&etas[i][0], 1, numevents);
+			rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
+						     numevents, mean);
+			fout << rpa << '\t' << mean
+			     << '\t' << rsdm << '\t';
+		}
+		fout << gsl_stats_correlation (&etas[0][0], 1, &etas[1][0], 1,
+					       D.NUM * D.ISUBS)
+		     << std::endl;
+	}
 
 #endif	// end of testing code for HSD data
 

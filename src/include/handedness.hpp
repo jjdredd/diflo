@@ -10,15 +10,15 @@
 #define MIN_DIST 1.0
 #define MAX_DIST 1.0
 #define MOMDIST 0		/* if zero skip momentum test */
-#define RPAngle 0.0		// angle of the reaction plane
 
-#define SubVolume(p) diant(p)	// choose a volume partition function
+#define SubVolume(p, a) diant(p, a)	// choose a volume partition function
 
 unsigned octant(particle &);
-unsigned diant(particle &);
+unsigned diant(particle &, double);
 
 
-void EventEta(event &, std::vector<double> &, std::vector<unsigned> &);
+void EventEta(event &, std::vector<double> &,
+	      std::vector<unsigned> &, double);
 
 
 #endif	// HANDED_HPP

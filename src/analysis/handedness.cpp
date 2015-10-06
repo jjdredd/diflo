@@ -32,7 +32,7 @@ unsigned octant(particle &p){
 	} 
 }
 
-unsigned diant(particle &p) {
+unsigned diant(particle &p, double RPAngle) {
 	if ((-p.Px*tan(RPAngle) + p.Py) > 0) return 0;
 	else return 1;
 }
@@ -42,7 +42,7 @@ unsigned diant(particle &p) {
  * write results in etas array (for 8 octants), writes the number
  * of particle triplet combinations that were used to calculate etas */
 void EventEta(event &e, std::vector<double> &etas,
-	      std::vector<unsigned> &comb_num){
+	      std::vector<unsigned> &comb_num, double RPAngle){
 
 	double eta[8], abseta[8], mxpr;
 	unsigned oct, i, j, k;
@@ -58,11 +58,11 @@ void EventEta(event &e, std::vector<double> &etas,
 	/* traverse all particles in this
 	 * event (isub, inum) */
 	for (i = 0; i < n; i++){
-		oct = SubVolume(p[i]);
+		oct = SubVolume(p[i], RPAngle);
 		for( j = i + 1; j < n; j++){
-			if(oct != SubVolume(p[j])) continue;
+			if(oct != SubVolume(p[j], RPAngle)) continue;
 			for(k = j + 1; k < n; k++){
-				if(oct != SubVolume(p[k])) continue;
+				if(oct != SubVolume(p[k], RPAngle)) continue;
 				/* first sort particles */
 				/* always i < j < k
 				 * -> if presorted then
