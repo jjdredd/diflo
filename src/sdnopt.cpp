@@ -121,6 +121,7 @@ int main(int argc, char** argv){
 			}
 		}
 
+		fout << rpa << '\t';
 		for(unsigned i = 0; i < 2; i++){
 			double rsn, mean, rsdm;
 			unsigned numevents = D.ISUBS * D.NUM;
@@ -128,8 +129,7 @@ int main(int argc, char** argv){
 			mean = gsl_stats_mean (&etas[i][0], 1, numevents);
 			rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
 						     numevents, mean);
-			fout << rpa << '\t' << mean
-			     << '\t' << rsdm << '\t';
+			fout << mean << '\t' << rsdm << '\t';
 		}
 		fout << gsl_stats_correlation (&etas[0][0], 1, &etas[1][0], 1,
 					       D.NUM * D.ISUBS)
