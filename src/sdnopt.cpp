@@ -113,6 +113,10 @@ int main(int argc, char** argv){
 
 	std::ofstream fout("res_vs_rpa.txt");
 	for(double rpa = 0; rpa < M_PI; rpa += 0.4) {
+		etas[0].clear();
+		etas[1].clear();
+		etas[0].reserve(D.ISUBS * D.NUM);
+		etas[1].reserve(D.ISUBS * D.NUM);
 		for(unsigned isub = 0; isub < D.ISUBS; isub++){
 			for(unsigned irun = 0; irun < D.NUM; irun++){
 				EventEta(D.P[isub][irun], evet, evnm, rpa);
