@@ -116,6 +116,9 @@ bool data::parse_input_line(char *str, int *isub, int *irun, particle *p){
 
 	int unk;
 
+	// Because Fuck Inheritance, That'S Why!
+	// really, rewrite this with different classes and
+	// inheritance !
 	switch(hsd_ver) {
 
 	case HSD_VER_ORIG:
