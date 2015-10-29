@@ -23,14 +23,14 @@
 /* #define PHSD */
 
 void print_usage() {
-	printf ("");
+	printf ("Usage: ");
 	return;
 }
 
 int main(int argc, char** argv){
   
 	char c, *file_data = NULL, *file_input = NULL;
-	DataVersion dversion;
+	void *data;
 	bool alice = false, req_input = true;
 	while ((c = getopt (argc, argv, "A:P:H:i:")) != -1) {
 
@@ -106,7 +106,11 @@ int main(int argc, char** argv){
 
 	} else {
 		std::ifstream s(argv[2]);
-		data D(s, HSD_VER_ORIG, true, 1);
+		switch (dversion) {
+		case HSD_VER_COORD:
+			
+		}
+		DataHSD D(s);
 		s.close();
 		// mesons
 		{

@@ -2,4 +2,4 @@
 
 // stuff to deal with momentum analysis only
 
-double MeanPx(data& D, bool zdir);
+double MeanPx(DataHSD& D, bool zdir);

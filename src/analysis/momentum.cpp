@@ -1,7 +1,7 @@
 #include "momentum.hpp"
 
 // if zdir == true then pick pz > 0 else pick pz < 0
-double MeanPx(data& D, bool zdir){
+double MeanPx(DataHSD& D, bool zdir){
 
 	double mpx = 0;
 	unsigned n = 0;

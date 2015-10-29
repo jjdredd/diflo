@@ -82,11 +82,13 @@ unsigned int event::particle_count(){
 }
 
 //
-// data class
+// DataHSD class
 //
 
-data::data(std::ifstream &s, DataVersion v, bool pick = false, int type = 0)
-	: hsd_ver(v), pick(pick), type(type) {
+DataHSD::DataHSD() : pick(false), type(0), P(NULL), ISUBS(0), NUM(0) {}
+
+DataHSD::DataHSD(std::ifstream &s, bool pick = false, int type = 0)
+	: pick(pick), type(type) {
 	char str[128];
 	int n;
 	// read input
@@ -106,49 +108,24 @@ data::data(std::ifstream &s, DataVersion v, bool pick = false, int type = 0)
 	for(unsigned i = 0; i < ISUBS; i++) P[i] = new event[NUM];
 }
 
-data::~data(){
+DataHSD::~DataHSD(){
+
+	if (!P) return;
+
 	for(unsigned i = 0; i < ISUBS; i++)
 		delete[] P[i];
 	delete[] P;
 }
 
-bool data::parse_input_line(char *str, int *isub, int *irun, particle *p){
 
-	int unk;
+bool DataHSD::parse_input_line(char *str, int *isub, int *irun, particle *p){
 
-	// Because Fuck Inheritance, That'S Why!
-	// really, rewrite this with different classes and
-	// inheritance !
-	switch(hsd_ver) {
-
-	case HSD_VER_ORIG:
-		return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
+	return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
 			       "\t%lf\n", &p->type, &p->charge, isub, irun,
 			       &p->Px, &p->Py, &p->Pz, &p->P0, &p->b) == 9);
-
-	case HSD_VER_COORD:
-		return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
-			       "\t%lf\t%lf\t%lf\t%lf\n",
-			       &p->type, &p->charge, isub, irun,
-			       &p->Px, &p->Py, &p->Pz, &p->P0,
-			       &p->b, &p->x, &p->y, &p->z) == 12);
-
-	case HSD_VER_PHSD:
-		return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
-			       "\t%lf\t%i\n",
-			       &p->type, &p->charge, isub, irun,
-			       &p->Px, &p->Py, &p->Pz, &p->P0,
-			       &p->b, &unk) == 10 );
-
-	default:		// must be empty
-
-		// TODO: for PHSD output format
-		std::cerr << "DataVersion not implemented, exiting!\n";
-		return false;
-	}
 }
 
-void data::readin_particles(std::ifstream &s, bool mesons){
+void DataHSD::readin_particles(std::ifstream &s, bool mesons){
     
 	int isub, irun;
 	char str[256];
@@ -167,8 +144,12 @@ void data::readin_particles(std::ifstream &s, bool mesons){
 	return;
 }
 
-unsigned data::NumberOfParticles(){
+unsigned DataHSD::NumberOfParticles(){
+
 	unsigned totnum = 0;
+
+	if (!P) return 0;
+
 	for(unsigned isub = 0; isub < ISUBS; isub++){
 		for(unsigned irun = 0; irun < NUM; irun++){
 			totnum += P[isub][irun].particle_count();
@@ -177,6 +158,32 @@ unsigned data::NumberOfParticles(){
 	return totnum;
 }
 
+
+//
+// DataHSDC class (HSD w/ coordinates)
+//
+
+bool DataHSDC::parse_input_line(char *str, int *isub, int *irun, particle *p){
+
+	return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf\t%lf\t"
+		       "%lf\t%lf\t%lf\n",
+		       &p->type, &p->charge, isub, irun, &p->Px, &p->Py,
+		       &p->Pz, &p->P0, &p->b, &p->x, &p->y, &p->z) == 12);
+}
+
+
+//
+// DataPHSD class
+//
+
+bool DataPHSD::parse_input_line(char *str, int *isub, int *irun, particle *p){
+
+	int unk;
+
+	return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf\t%lf\t%i\n",
+		       &p->type, &p->charge, isub, irun, &p->Px, &p->Py,
+		       &p->Pz, &p->P0, &p->b, &unk) == 10 );
+}
 
 
 //
