@@ -23,17 +23,23 @@
 /* #define PHSD */
 
 void print_usage() {
-	printf ("Usage: ");
+	printf ("Usage:\n"
+		"\t -A <file> - parse ALICE data from <file>\n\n"
+		"\t -P <file> - parse PHSD data from <file>\n\n"
+		"\t -H <file> - parse HSD data from <file>\n\n"
+		"\t -i <file> - use <file> as input file for (P)HSD program\n"
+		"\t (required only for (P)HSD data)\n\n"
+		"\t -t <int> - use only particle type <int>\n\n");
 	return;
 }
 
 int main(int argc, char** argv){
   
 	char c, *file_data = NULL, *file_input = NULL;
-	void *data;
-	bool alice = false, req_input = true;
+	bool alice = false, req_input = true, pick = false;
 	DataVersion dversion;
-	while ((c = getopt (argc, argv, "A:P:H:i:")) != -1) {
+	int type = 0;
+	while ((c = getopt (argc, argv, "A:P:H:i:t:")) != -1) {
 
 		switch (c) {
 
@@ -55,6 +61,11 @@ int main(int argc, char** argv){
 
 		case 'i':
 			file_input = optarg;
+			break;
+
+		case 't':
+			pick = true;
+			type = std::stoi(optarg);
 
 		case '?':
 		default:
@@ -106,16 +117,32 @@ int main(int argc, char** argv){
 		}
 
 	} else {
-		std::ifstream s(argv[2]);
-		// switch (dversion) {
-		// case HSD_VER_COORD:
-			
-		// }
-		DataHSD D(s);
+
+		std::ifstream s(file_input);
+		DataHSD D;
+
+		//
+		// DON'T FORGET ABOUT PARTICLE TYPE HERE!
+		//
+
+		switch (dversion) {
+
+		case HSD_VER_ORIG:
+			D = DataHSD(s, pick, type);
+
+		case HSD_VER_COORD:
+			D = DataHSDC(s, pick, type);
+
+		case HSD_VER_PHSD:
+			D = DataPHSD(s, pick, type);
+
+		}
 		s.close();
+
+
 		// mesons
 		{
-			s.open(argv[1]);
+			s.open(file_data);
 			if(s.is_open()) D.readin_particles(s, true);
 			// else std::cout << "Warning: couldn't open mesons file "
 			// 		   << argv[1] << '\n';
