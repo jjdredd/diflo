@@ -12,7 +12,7 @@
 #include "data.hpp"
 
 #include <cmath>
-#include <cunistd>
+#include <unistd.h>
 #include <gsl/gsl_statistics_double.h>
 
 #include <fstream>
@@ -32,6 +32,7 @@ int main(int argc, char** argv){
 	char c, *file_data = NULL, *file_input = NULL;
 	void *data;
 	bool alice = false, req_input = true;
+	DataVersion dversion;
 	while ((c = getopt (argc, argv, "A:P:H:i:")) != -1) {
 
 		switch (c) {
@@ -84,7 +85,7 @@ int main(int argc, char** argv){
 			event e;
 
 			while (D.FetchNumEvent(e, start, start + w)) {
-				EventEta(e, evet, evnm);
+				EventEta(e, evet, evnm, 0);
 				for(unsigned i = 0; i < 8; i++) {
 					etas[i].push_back(evet[i]);
 				}
@@ -106,10 +107,10 @@ int main(int argc, char** argv){
 
 	} else {
 		std::ifstream s(argv[2]);
-		switch (dversion) {
-		case HSD_VER_COORD:
+		// switch (dversion) {
+		// case HSD_VER_COORD:
 			
-		}
+		// }
 		DataHSD D(s);
 		s.close();
 		// mesons

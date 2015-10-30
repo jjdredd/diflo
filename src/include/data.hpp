@@ -75,10 +75,10 @@ public:
 	double Elab, Time;
 	event **P;
 	DataHSD();
-	DataHSD(std::ifstream &s, bool, int);
+	DataHSD(std::ifstream &s, bool pick = false, int type = 0);
 	virtual ~DataHSD();
 	unsigned NumberOfParticles();
-	void readin_particles(std::ifstream &s, bool mesons);
+	void readin_particles(std::ifstream &, bool mesons);
 
 private:
 	int type, charge;
@@ -90,13 +90,19 @@ private:
 class DataHSDC : public DataHSD {		// with coordiantes
 
 public:
-	DataHSDC(&s, bool, int);
+	DataHSDC();
+	DataHSDC(std::ifstream &s, bool pick = false, int type = 0);
+
 private:
 	virtual bool parse_input_line(char *str, int *isub, int *irun,
 				      particle *p);
 };
 
 class DataPHSD : public DataHSD { // for PHSD
+
+public:
+	DataPHSD();
+	DataPHSD(std::ifstream &s, bool pick = false, int type = 0);
 
 private:
 	virtual bool parse_input_line(char *str, int *isub, int *irun,
@@ -115,7 +121,7 @@ public:
 	ALICEData(const char *);
 	~ALICEData();
 	bool FetchEvent(event &);
-	bool FetchNumEvent(event &, unsigned, unsigned);
+	bool FetchNumEvent(event &e, unsigned lower, unsigned upper = 0);
 
 private:
 	unsigned cur_npart, cur_nev;

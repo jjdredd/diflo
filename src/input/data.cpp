@@ -87,7 +87,7 @@ unsigned int event::particle_count(){
 
 DataHSD::DataHSD() : pick(false), type(0), P(NULL), ISUBS(0), NUM(0) {}
 
-DataHSD::DataHSD(std::ifstream &s, bool pick = false, int type = 0)
+DataHSD::DataHSD(std::ifstream &s, bool pick, int type)
 	: pick(pick), type(type) {
 	char str[128];
 	int n;
@@ -163,6 +163,12 @@ unsigned DataHSD::NumberOfParticles(){
 // DataHSDC class (HSD w/ coordinates)
 //
 
+DataHSDC::DataHSDC() {}
+
+DataHSDC::DataHSDC(std::ifstream &s, bool pick, int type)
+	: DataHSD(s, pick, type) {}
+
+
 bool DataHSDC::parse_input_line(char *str, int *isub, int *irun, particle *p){
 
 	return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf\t%lf\t"
@@ -175,6 +181,12 @@ bool DataHSDC::parse_input_line(char *str, int *isub, int *irun, particle *p){
 //
 // DataPHSD class
 //
+
+DataPHSD::DataPHSD() {}
+
+DataPHSD::DataPHSD(std::ifstream &s, bool pick, int type)
+	: DataHSD(s, pick, type) {}
+
 
 bool DataPHSD::parse_input_line(char *str, int *isub, int *irun, particle *p){
 
@@ -221,7 +233,7 @@ bool ALICEData::FetchEvent(event &e){
 
 // fetch an event that has at least 'lower' particles and at most 'upper'
 // particles. If upper is '0', the upper limit is removed
-bool ALICEData::FetchNumEvent(event &e, unsigned lower, unsigned upper = 0) {
+bool ALICEData::FetchNumEvent(event &e, unsigned lower, unsigned upper) {
 	if (upper && lower > upper) return false;
 	while (FetchEvent(e)) {
 		if (cur_npart > lower
