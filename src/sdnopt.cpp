@@ -23,20 +23,24 @@
 /* #define PHSD */
 
 void print_usage() {
-	printf ("Usage:\n"
+	printf ("sdnopt.elf: calculate handedness for various data\n"
 		"\t -A <file> - parse ALICE data from <file>\n\n"
 		"\t -P <file> - parse PHSD data from <file>\n\n"
 		"\t -H <file> - parse HSD data from <file>\n\n"
+		"The following options are only for (P)HSD data. \n\n"
 		"\t -i <file> - use <file> as input file for (P)HSD program\n"
-		"\t (required only for (P)HSD data)\n\n"
-		"\t -t <int> - use only particle type <int>\n\n");
+		"\t -t <int> - use only particle type <int>\n\n"
+		"\t -2 - calculate handedness in diants\n\n"
+		"\t -8 - calculate handedness for octants\n\n"
+		"\t -a - calculate handedness vs angle (implies -2)\n\n");
 	return;
 }
 
 int main(int argc, char** argv){
   
 	char c, *file_data = NULL, *file_input = NULL;
-	bool alice = false, req_input = true, pick = false;
+	bool alice = false, req_input = true, pick = false,
+		angle = false, in_octants = true;
 	DataVersion dversion;
 	int type = 0;
 	while ((c = getopt (argc, argv, "A:P:H:i:t:")) != -1) {
@@ -66,6 +70,17 @@ int main(int argc, char** argv){
 		case 't':
 			pick = true;
 			type = std::stoi(optarg);
+
+		case '2':
+			in_octants = false;
+
+		case '8':
+			in_octants = true;
+			angle = false;
+
+		case 'a':
+			angle = true;
+			in_octants = false;
 
 		case '?':
 		default:
@@ -116,56 +131,60 @@ int main(int argc, char** argv){
 			}
 		}
 
-	} else {
+		return 0;
+	}
 
-		std::ifstream s(file_input);
-		DataHSD D;
+	std::ifstream s(file_input);
+	DataHSD D;
 
-		//
-		// DON'T FORGET ABOUT PARTICLE TYPE HERE!
-		//
+	//
+	// DON'T FORGET ABOUT PARTICLE TYPE HERE!
+	//
 
-		switch (dversion) {
+	switch (dversion) {
 
-		case HSD_VER_ORIG:
-			D = DataHSD(s, pick, type);
+	case HSD_VER_ORIG:
+		D = DataHSD(s, pick, type);
 
-		case HSD_VER_COORD:
-			D = DataHSDC(s, pick, type);
+	case HSD_VER_COORD:
+		D = DataHSDC(s, pick, type);
 
-		case HSD_VER_PHSD:
-			D = DataPHSD(s, pick, type);
+	case HSD_VER_PHSD:
+		D = DataPHSD(s, pick, type);
 
-		}
+	}
+	s.close();
+
+	// mesons
+	{
+		s.open(file_data);
+		if(s.is_open()) D.readin_particles(s, true);
+		// else std::cout << "Warning: couldn't open mesons file "
+		// 		   << argv[1] << '\n';
 		s.close();
+	}
 
+	if (in_octants) {
 
-		// mesons
-		{
-			s.open(file_data);
-			if(s.is_open()) D.readin_particles(s, true);
-			// else std::cout << "Warning: couldn't open mesons file "
-			// 		   << argv[1] << '\n';
-			s.close();
-		}
-		std::vector<double> etas[2], evet;
+		std::vector<double> etas[8], evet;
 		std::vector<unsigned> evnm;
 
-		etas[0].reserve(D.ISUBS * D.NUM);
-		etas[1].reserve(D.ISUBS * D.NUM);
-		evet.reserve(2);
-		evnm.reserve(2);
+		for (unsigned oct = 0; oct < 8; oct++)
+			etas[oct].reserve(D.ISUBS * D.NUM);
 
-#if 0
+		evet.reserve(8);
+		evnm.reserve(8);
+
 		for(unsigned isub = 0; isub < D.ISUBS; isub++){
 			for(unsigned irun = 0; irun < D.NUM; irun++){
-				EventEta(D.P[isub][irun], evet, evnm, rpa);
-				etas[0].push_back(evet[0]);
-				etas[1].push_back(evet[1]);
+				EventEta(D.P[isub][irun], evet, evnm, 0);
+
+				for (unsigned oct = 0; oct < 8; oct++)
+					etas[oct].push_back(evet[oct]);
 			}
 		}
 
-		for(unsigned i = 0; i < 2; i++){
+		for(unsigned i = 0; i < 8; i++){
 			double rsn, mean, rsdm;
 			unsigned numevents = D.ISUBS * D.NUM;
 			rsn = 1/sqrt(numevents);
@@ -175,12 +194,26 @@ int main(int argc, char** argv){
 			std::cout << rsn << '\t' << mean
 				  << '\t' << rsdm << std::endl;
 		}
-		std::cout << "Correlation: "
-			  << gsl_stats_correlation (&etas[0][0], 1,
-						    &etas[1][0], 1,
-						    D.NUM * D.ISUBS)
-			  << std::endl;
-#endif	// end of old calc code
+
+		// forget about correlations for a while
+		// std::cout << "Correlation: "
+		// 	  << gsl_stats_correlation (&etas[0][0], 1,
+		// 				    &etas[1][0], 1,
+		// 				    D.NUM * D.ISUBS)
+		// 	  << std::endl;
+
+		return 0;
+	}
+
+	std::vector<double> etas[2], evet;
+	std::vector<unsigned> evnm;
+
+	etas[0].reserve(D.ISUBS * D.NUM);
+	etas[1].reserve(D.ISUBS * D.NUM);
+	evet.reserve(2);
+	evnm.reserve(2);
+
+	if (angle) {
 
 		std::ofstream fout("res_vs_rpa.txt");
 		for(double rpa = 0; rpa < M_PI; rpa += 0.4) {
@@ -214,6 +247,31 @@ int main(int argc, char** argv){
 			     << std::endl;
 		}
 
+	} else {
+
+		for(unsigned isub = 0; isub < D.ISUBS; isub++){
+			for(unsigned irun = 0; irun < D.NUM; irun++){
+				EventEta(D.P[isub][irun], evet, evnm, 0);
+				etas[0].push_back(evet[0]);
+				etas[1].push_back(evet[1]);
+			}
+		}
+
+		for(unsigned i = 0; i < 2; i++){
+			double rsn, mean, rsdm;
+			unsigned numevents = D.ISUBS * D.NUM;
+			rsn = 1/sqrt(numevents);
+			mean = gsl_stats_mean (&etas[i][0], 1, numevents);
+			rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
+						     numevents, mean);
+			std::cout << rsn << '\t' << mean
+				  << '\t' << rsdm << std::endl;
+		}
+		std::cout << "Correlation: "
+			  << gsl_stats_correlation (&etas[0][0], 1,
+						    &etas[1][0], 1,
+						    D.NUM * D.ISUBS)
+			  << std::endl;
 	}
 
 	return 0;
