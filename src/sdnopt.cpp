@@ -27,8 +27,9 @@ void print_usage() {
 		"\t -A <file> - parse ALICE data from <file>\n\n"
 		"\t -P <file> - parse PHSD data from <file>\n\n"
 		"\t -H <file> - parse HSD data from <file>\n\n"
-		"The following options are only for (P)HSD data. \n\n"
-		"\t -i <file> - use <file> as input file for (P)HSD program\n"
+		"The following options are only for (P)HSD data.\n\n"
+		"\t -i <file> - use <file> as input file for"
+		"(P)HSD program\n\n"
 		"\t -t <int> - use only particle type <int>\n\n"
 		"\t -2 - calculate handedness in diants\n\n"
 		"\t -8 - calculate handedness for octants\n\n"
@@ -94,7 +95,7 @@ int main(int argc, char** argv){
 		}
 	}
 
-	if (req_input && !alice) {
+	if (req_input && !alice && !file_input) {
 		print_usage();
 		return -1;
 	}
@@ -150,12 +151,15 @@ int main(int argc, char** argv){
 
 	case HSD_VER_ORIG:
 		D = DataHSD(s, pick, type);
+		break;
 
 	case HSD_VER_COORD:
 		D = DataHSDC(s, pick, type);
+		break;
 
 	case HSD_VER_PHSD:
 		D = DataPHSD(s, pick, type);
+		break;
 
 	}
 	s.close();
