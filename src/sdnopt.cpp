@@ -70,17 +70,22 @@ int main(int argc, char** argv){
 		case 't':
 			pick = true;
 			type = std::stoi(optarg);
+			break;
 
 		case '2':
 			in_octants = false;
+			angle = false;
+			break;
 
 		case '8':
 			in_octants = true;
 			angle = false;
+			break;
 
 		case 'a':
 			angle = true;
 			in_octants = false;
+			break;
 
 		case '?':
 		default:
