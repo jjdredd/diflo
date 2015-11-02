@@ -74,7 +74,7 @@ public:
 	unsigned ISUBS, NUM, A, NParticles;
 	double Elab, Time;
 	event **P;
-	data(std::ifstream &s, DataVersion v, bool, int);
+	data(std::ifstream &s, DataVersion v, bool pick = false, int type = 0);
 	~data();
 	unsigned NumberOfParticles();
 	void readin_particles(std::ifstream &s, bool mesons);
@@ -100,7 +100,7 @@ public:
 	ALICEData(const char *);
 	~ALICEData();
 	bool FetchEvent(event &);
-	bool FetchNumEvent(event &, unsigned, unsigned);
+	bool FetchNumEvent(event &e, unsigned lower, unsigned upper = 0);
 
 private:
 	unsigned cur_npart, cur_nev;

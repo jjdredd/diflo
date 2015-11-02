@@ -85,7 +85,7 @@ unsigned int event::particle_count(){
 // data class
 //
 
-data::data(std::ifstream &s, DataVersion v, bool pick = false, int type = 0)
+data::data(std::ifstream &s, DataVersion v, bool pick, int type)
 	: hsd_ver(v), pick(pick), type(type) {
 	char str[128];
 	int n;
@@ -211,7 +211,7 @@ bool ALICEData::FetchEvent(event &e){
 
 // fetch an event that has at least 'lower' particles and at most 'upper'
 // particles. If upper is '0', the upper limit is removed
-bool ALICEData::FetchNumEvent(event &e, unsigned lower, unsigned upper = 0) {
+bool ALICEData::FetchNumEvent(event &e, unsigned lower, unsigned upper) {
 	if (upper && lower > upper) return false;
 	while (FetchEvent(e)) {
 		if (cur_npart > lower
