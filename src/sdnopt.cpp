@@ -43,7 +43,7 @@ int main(int argc, char** argv){
 		angle = false, in_octants = true;
 	DataVersion dversion;
 	int type = 0;
-	while ((c = getopt (argc, argv, "A:P:H:i:t:")) != -1) {
+	while ((c = getopt (argc, argv, "A:P:H:i:t:28a")) != -1) {
 
 		switch (c) {
 
