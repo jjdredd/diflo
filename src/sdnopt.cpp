@@ -141,7 +141,7 @@ int main(int argc, char** argv){
 	}
 
 	std::ifstream s(file_input);
-	DataHSD D;
+	DataHSD *D;
 
 	//
 	// DON'T FORGET ABOUT PARTICLE TYPE HERE!
@@ -150,15 +150,15 @@ int main(int argc, char** argv){
 	switch (dversion) {
 
 	case HSD_VER_ORIG:
-		D = DataHSD(s, pick, type);
+		D = new DataHSD(s, pick, type);
 		break;
 
 	case HSD_VER_COORD:
-		D = DataHSDC(s, pick, type);
+		D = new DataHSDC(s, pick, type);
 		break;
 
 	case HSD_VER_PHSD:
-		D = DataPHSD(s, pick, type);
+		D = new DataPHSD(s, pick, type);
 		break;
 
 	}
@@ -167,9 +167,9 @@ int main(int argc, char** argv){
 	// mesons
 	{
 		s.open(file_data);
-		if(s.is_open()) D.readin_particles(s, true);
-		// else std::cout << "Warning: couldn't open mesons file "
-		// 		   << argv[1] << '\n';
+		if(s.is_open()) D->readin_particles(s, true);
+		else std::cout << "Warning: couldn't open mesons file "
+				   << argv[1] << '\n';
 		s.close();
 	}
 
@@ -179,14 +179,14 @@ int main(int argc, char** argv){
 		std::vector<unsigned> evnm;
 
 		for (unsigned oct = 0; oct < 8; oct++)
-			etas[oct].reserve(D.ISUBS * D.NUM);
+			etas[oct].reserve(D->ISUBS * D->NUM);
 
 		evet.reserve(8);
 		evnm.reserve(8);
 
-		for(unsigned isub = 0; isub < D.ISUBS; isub++){
-			for(unsigned irun = 0; irun < D.NUM; irun++){
-				EventEta(D.P[isub][irun], evet, evnm, 0);
+		for(unsigned isub = 0; isub < D->ISUBS; isub++){
+			for(unsigned irun = 0; irun < D->NUM; irun++){
+				EventEta(D->P[isub][irun], evet, evnm, 0);
 
 				for (unsigned oct = 0; oct < 8; oct++)
 					etas[oct].push_back(evet[oct]);
@@ -195,7 +195,7 @@ int main(int argc, char** argv){
 
 		for(unsigned i = 0; i < 8; i++){
 			double rsn, mean, rsdm;
-			unsigned numevents = D.ISUBS * D.NUM;
+			unsigned numevents = D->ISUBS * D->NUM;
 			rsn = 1/sqrt(numevents);
 			mean = gsl_stats_mean (&etas[i][0], 1, numevents);
 			rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
@@ -208,7 +208,7 @@ int main(int argc, char** argv){
 		// std::cout << "Correlation: "
 		// 	  << gsl_stats_correlation (&etas[0][0], 1,
 		// 				    &etas[1][0], 1,
-		// 				    D.NUM * D.ISUBS)
+		// 				    D->NUM * D->ISUBS)
 		// 	  << std::endl;
 
 		return 0;
@@ -217,8 +217,8 @@ int main(int argc, char** argv){
 	std::vector<double> etas[2], evet;
 	std::vector<unsigned> evnm;
 
-	etas[0].reserve(D.ISUBS * D.NUM);
-	etas[1].reserve(D.ISUBS * D.NUM);
+	etas[0].reserve(D->ISUBS * D->NUM);
+	etas[1].reserve(D->ISUBS * D->NUM);
 	evet.reserve(2);
 	evnm.reserve(2);
 
@@ -228,11 +228,11 @@ int main(int argc, char** argv){
 		for(double rpa = 0; rpa < M_PI; rpa += 0.4) {
 			etas[0].clear();
 			etas[1].clear();
-			etas[0].reserve(D.ISUBS * D.NUM);
-			etas[1].reserve(D.ISUBS * D.NUM);
-			for(unsigned isub = 0; isub < D.ISUBS; isub++){
-				for(unsigned irun = 0; irun < D.NUM; irun++){
-					EventEta(D.P[isub][irun], evet,
+			etas[0].reserve(D->ISUBS * D->NUM);
+			etas[1].reserve(D->ISUBS * D->NUM);
+			for(unsigned isub = 0; isub < D->ISUBS; isub++){
+				for(unsigned irun = 0; irun < D->NUM; irun++){
+					EventEta(D->P[isub][irun], evet,
 						 evnm, rpa);
 					etas[0].push_back(evet[0]);
 					etas[1].push_back(evet[1]);
@@ -242,7 +242,7 @@ int main(int argc, char** argv){
 			fout << rpa << '\t';
 			for(unsigned i = 0; i < 2; i++){
 				double rsn, mean, rsdm;
-				unsigned numevents = D.ISUBS * D.NUM;
+				unsigned numevents = D->ISUBS * D->NUM;
 				rsn = 1/sqrt(numevents);
 				mean = gsl_stats_mean (&etas[i][0], 1,
 						       numevents);
@@ -252,15 +252,15 @@ int main(int argc, char** argv){
 			}
 			fout << gsl_stats_correlation (&etas[0][0], 1,
 						       &etas[1][0], 1,
-						       D.NUM * D.ISUBS)
+						       D->NUM * D->ISUBS)
 			     << std::endl;
 		}
 
 	} else {
 
-		for(unsigned isub = 0; isub < D.ISUBS; isub++){
-			for(unsigned irun = 0; irun < D.NUM; irun++){
-				EventEta(D.P[isub][irun], evet, evnm, 0);
+		for(unsigned isub = 0; isub < D->ISUBS; isub++){
+			for(unsigned irun = 0; irun < D->NUM; irun++){
+				EventEta(D->P[isub][irun], evet, evnm, 0);
 				etas[0].push_back(evet[0]);
 				etas[1].push_back(evet[1]);
 			}
@@ -268,7 +268,7 @@ int main(int argc, char** argv){
 
 		for(unsigned i = 0; i < 2; i++){
 			double rsn, mean, rsdm;
-			unsigned numevents = D.ISUBS * D.NUM;
+			unsigned numevents = D->ISUBS * D->NUM;
 			rsn = 1/sqrt(numevents);
 			mean = gsl_stats_mean (&etas[i][0], 1, numevents);
 			rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
@@ -279,9 +279,10 @@ int main(int argc, char** argv){
 		std::cout << "Correlation: "
 			  << gsl_stats_correlation (&etas[0][0], 1,
 						    &etas[1][0], 1,
-						    D.NUM * D.ISUBS)
+						    D->NUM * D->ISUBS)
 			  << std::endl;
 	}
 
+	delete D;
 	return 0;
 }

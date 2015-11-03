@@ -134,7 +134,7 @@ void DataHSD::readin_particles(std::ifstream &s, bool mesons){
 	s.getline(str, 256);
 	while(parse_input_line(str, &isub, &irun, &ptcl) && (!s.eof())){
 		isub--; irun--;
-		if (pick && type == ptcl.type) {
+		if (!pick || type == ptcl.type) {
 			ptcl.meson = mesons;
 			P[isub][irun].add_particle(ptcl);
 			NParticles += 1;
