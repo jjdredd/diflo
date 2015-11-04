@@ -58,11 +58,11 @@ void EventEta(event &e, std::vector<double> &etas,
 	/* traverse all particles in this
 	 * event (isub, inum) */
 	for (i = 0; i < n; i++){
-		oct = SubVolume(p[i], RPAngle);
+		oct = sub_volume(p[i], RPAngle);
 		for( j = i + 1; j < n; j++){
-			if(oct != SubVolume(p[j], RPAngle)) continue;
+			if(oct != sub_volume(p[j], RPAngle)) continue;
 			for(k = j + 1; k < n; k++){
-				if(oct != SubVolume(p[k], RPAngle)) continue;
+				if(oct != sub_volume(p[k], RPAngle)) continue;
 				/* first sort particles */
 				/* always i < j < k
 				 * -> if presorted then
