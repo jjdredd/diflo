@@ -23,7 +23,7 @@ public:
 	Handedness();
 	virtual ~Handedness();
 	void EventEta(event &, std::vector<double> &,
-			      std::vector<unsigned> &, double);
+			      std::vector<unsigned> &);
 
 private:
 	virtual unsigned sub_volume(particle &); // octants
@@ -37,11 +37,11 @@ private:
 class HandednessExp : public Handedness {
 
 public:
-	Handedness();
-	~Handedness();
+	HandednessExp();
+	double RPAngle;
 
 private:
-	virtual unsigned sub_volume(particle &p, double angle = 0);
+	virtual unsigned sub_volume(particle &p);
 };
 
 #endif	// HANDED_HPP

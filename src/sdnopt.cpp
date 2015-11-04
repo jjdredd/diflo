@@ -100,6 +100,10 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
+	Handedness *H = NULL;
+	if (in_octants) H = new Handedness();
+	else H = new HandednessExp();
+
 	if (alice) {
 		std::ofstream files[8];
 		for (unsigned i = 0; i < 8; i++) {
@@ -117,7 +121,8 @@ int main(int argc, char** argv){
 			event e;
 
 			while (D.FetchNumEvent(e, start, start + w)) {
-				EventEta(e, evet, evnm, 0);
+				H->RPAngle = 0;
+				H->EventEta(e, evet, evnm);
 				for(unsigned i = 0; i < 8; i++) {
 					etas[i].push_back(evet[i]);
 				}
@@ -141,7 +146,7 @@ int main(int argc, char** argv){
 	}
 
 	std::ifstream s(file_input);
-	DataHSD *D;
+	DataHSD *D = NULL;
 
 	//
 	// DON'T FORGET ABOUT PARTICLE TYPE HERE!
@@ -169,7 +174,7 @@ int main(int argc, char** argv){
 		s.open(file_data);
 		if(s.is_open()) D->readin_particles(s, true);
 		else std::cout << "Warning: couldn't open mesons file "
-				   << argv[1] << '\n';
+			       << argv[1] << '\n';
 		s.close();
 	}
 
@@ -186,7 +191,8 @@ int main(int argc, char** argv){
 
 		for(unsigned isub = 0; isub < D->ISUBS; isub++){
 			for(unsigned irun = 0; irun < D->NUM; irun++){
-				EventEta(D->P[isub][irun], evet, evnm, 0);
+				H->RPAngle = 0;
+				H->EventEta(D->P[isub][irun], evet, evnm);
 
 				for (unsigned oct = 0; oct < 8; oct++)
 					etas[oct].push_back(evet[oct]);
@@ -232,8 +238,9 @@ int main(int argc, char** argv){
 			etas[1].reserve(D->ISUBS * D->NUM);
 			for(unsigned isub = 0; isub < D->ISUBS; isub++){
 				for(unsigned irun = 0; irun < D->NUM; irun++){
-					EventEta(D->P[isub][irun], evet,
-						 evnm, rpa);
+					H->RPAngle = rpa;
+					H->EventEta(D->P[isub][irun], evet,
+						    evnm);
 					etas[0].push_back(evet[0]);
 					etas[1].push_back(evet[1]);
 				}
@@ -260,7 +267,8 @@ int main(int argc, char** argv){
 
 		for(unsigned isub = 0; isub < D->ISUBS; isub++){
 			for(unsigned irun = 0; irun < D->NUM; irun++){
-				EventEta(D->P[isub][irun], evet, evnm, 0);
+				H->RPAngle = 0;
+				H->EventEta(D->P[isub][irun], evet, evnm);
 				etas[0].push_back(evet[0]);
 				etas[1].push_back(evet[1]);
 			}
@@ -284,5 +292,6 @@ int main(int argc, char** argv){
 	}
 
 	delete D;
+	delete H;
 	return 0;
 }
