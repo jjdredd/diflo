@@ -100,12 +100,11 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
-	Handedness *H = NULL;
-	if (in_octants) H = new Handedness();
-	else H = new HandednessExp();
-
 	if (alice) {
+
+		HandednessExp H;
 		std::ofstream files[8];
+
 		for (unsigned i = 0; i < 8; i++) {
 			std::string name = "res/oct_multip_"
 				+ std::to_string(i);
@@ -121,8 +120,8 @@ int main(int argc, char** argv){
 			event e;
 
 			while (D.FetchNumEvent(e, start, start + w)) {
-				H->RPAngle = 0;
-				H->EventEta(e, evet, evnm);
+				H.RPAngle = 0;
+				H.EventEta(e, evet, evnm);
 				for(unsigned i = 0; i < 8; i++) {
 					etas[i].push_back(evet[i]);
 				}
@@ -182,6 +181,7 @@ int main(int argc, char** argv){
 
 		std::vector<double> etas[8], evet;
 		std::vector<unsigned> evnm;
+		Handedness H;
 
 		for (unsigned oct = 0; oct < 8; oct++)
 			etas[oct].reserve(D->ISUBS * D->NUM);
@@ -191,8 +191,7 @@ int main(int argc, char** argv){
 
 		for(unsigned isub = 0; isub < D->ISUBS; isub++){
 			for(unsigned irun = 0; irun < D->NUM; irun++){
-				H->RPAngle = 0;
-				H->EventEta(D->P[isub][irun], evet, evnm);
+				H.EventEta(D->P[isub][irun], evet, evnm);
 
 				for (unsigned oct = 0; oct < 8; oct++)
 					etas[oct].push_back(evet[oct]);
@@ -222,6 +221,7 @@ int main(int argc, char** argv){
 
 	std::vector<double> etas[2], evet;
 	std::vector<unsigned> evnm;
+	HandednessExp H;
 
 	etas[0].reserve(D->ISUBS * D->NUM);
 	etas[1].reserve(D->ISUBS * D->NUM);
@@ -238,8 +238,8 @@ int main(int argc, char** argv){
 			etas[1].reserve(D->ISUBS * D->NUM);
 			for(unsigned isub = 0; isub < D->ISUBS; isub++){
 				for(unsigned irun = 0; irun < D->NUM; irun++){
-					H->RPAngle = rpa;
-					H->EventEta(D->P[isub][irun], evet,
+					H.RPAngle = rpa;
+					H.EventEta(D->P[isub][irun], evet,
 						    evnm);
 					etas[0].push_back(evet[0]);
 					etas[1].push_back(evet[1]);
@@ -267,8 +267,8 @@ int main(int argc, char** argv){
 
 		for(unsigned isub = 0; isub < D->ISUBS; isub++){
 			for(unsigned irun = 0; irun < D->NUM; irun++){
-				H->RPAngle = 0;
-				H->EventEta(D->P[isub][irun], evet, evnm);
+				H.RPAngle = 0;
+				H.EventEta(D->P[isub][irun], evet, evnm);
 				etas[0].push_back(evet[0]);
 				etas[1].push_back(evet[1]);
 			}
@@ -292,6 +292,5 @@ int main(int argc, char** argv){
 	}
 
 	delete D;
-	delete H;
 	return 0;
 }
