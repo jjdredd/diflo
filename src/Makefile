@@ -18,7 +18,7 @@ sdnopt.elf: sdnopt.cpp inputlib analys
 	$(INPUT_F) analysis/handedness.o \
 	-o sdnopt.elf
 
-multip.elf: multip.cpp
+multip.elf: multip.cpp $(INPUT_F)
 	g++ $(CXXFLAGS) $(LDFLAGS) multip.cpp \
 	$(INPUT_F) -o multip.elf
 
