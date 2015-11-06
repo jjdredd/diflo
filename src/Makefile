@@ -4,7 +4,7 @@ OPTFLAGS = -march=native -ffast-math -O3 -funroll-loops # -msse
 export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS) -g
 export CXXFLAGS = $(CFLAGS) -std=c++11
 export LDFLAGS = -lm
-INPUT_F = input/data.o
+INPUT_F = input/data.o input/root_data.o
 ANALYS_F = analysis/fft.o analysis/dist.o analysis/momentum.o \
 analysis/handedness.o
 

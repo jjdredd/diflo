@@ -130,6 +130,25 @@ private:
 	bool parse_line(char *, particle &);
 };
 
+
+//
+// Class for ROOT data
+//
+
+class ROOTData {
+
+public:
+	ROOTData();
+	ROOTData(char *);
+	~ROOTData();
+	bool FetchEvent(event &);
+
+private:
+	TFile *tfin;
+	TTree *tin;
+	unsigned nentries, cur_event;
+};
+
 #if 0
 
 //
