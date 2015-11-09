@@ -71,7 +71,7 @@ ROOTData::ROOTData() {}
 ROOTData::~ROOTData() {}
 
 ROOTData::ROOTData(char * file_name) : tfin(file_name), cur_event(0) {
-	tin = tfin.Get("out");
+	tin = static_cast<TTree *>(tfin.Get("out"));
 	nentries = tin->GetEntries();
 	tin->Print();
 }
@@ -88,7 +88,7 @@ bool ROOTData::FetchEvent(event &e) {
 	tin->SetBranchAddress("npart", &npart);
 	if (tin->GetEntry(cur_event) <= 0) return false;
 
-	e.reserve(npart);
+	e.particles.reserve(npart);
 
 	double *x = new double[npart],
 		*y = new double[npart],

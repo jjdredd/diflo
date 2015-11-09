@@ -1,8 +1,8 @@
 WFLAGS = -W -Wall -Wextra
 IFLAGS = -iquote $(shell pwd)/include
 OPTFLAGS = -march=native -ffast-math -O3 -funroll-loops # -msse
-ROOT_INC = "-I /opt/root/include"
-ROOT_LIB = "-L /opt/root/lib -lTTree"
+ROOT_INC = $(shell /opt/root/bin/root-config --cflags)
+ROOT_LIB = $(shell /opt/root/bin/root-config --libs) -lssl -Xlinker "-rpath=/opt/root/lib/"
 export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS) $(ROOT_INC) -g
 export CXXFLAGS = $(CFLAGS) -std=c++11
 export LDFLAGS = -lm $(ROOT_LIB)
