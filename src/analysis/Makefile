@@ -1,8 +1,6 @@
 
 # just organize everything into an .a lib to avoid mess ???
 
-all: dist.o fft.o momentum.o handedness.o
-
 dist.o: dist.cpp
 	g++ $(CXXFLAGS) -c -o dist.o dist.cpp
 

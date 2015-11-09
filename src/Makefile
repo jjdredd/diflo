@@ -1,12 +1,15 @@
 WFLAGS = -W -Wall -Wextra
 IFLAGS = -iquote $(shell pwd)/include
 OPTFLAGS = -march=native -ffast-math -O3 -funroll-loops # -msse
-export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS) -g
+ROOT_INC = "-I /opt/root/include"
+ROOT_LIB = "-L /opt/root/lib -lTTree"
+export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS) $(ROOT_INC) -g
 export CXXFLAGS = $(CFLAGS) -std=c++11
-export LDFLAGS = -lm
+export LDFLAGS = -lm $(ROOT_LIB)
 INPUT_F = input/data.o input/root_data.o
 ANALYS_F = analysis/fft.o analysis/dist.o analysis/momentum.o \
 analysis/handedness.o
+
 
 all: diflo.elf sdnopt.elf multip.elf
 

@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstdio>
 #include <cmath>
+#include <TTree.h>
 
 //
 // struct particle
@@ -144,7 +145,7 @@ public:
 	bool FetchEvent(event &);
 
 private:
-	TFile *tfin;
+	TFile tfin;
 	TTree *tin;
 	unsigned nentries, cur_event;
 };

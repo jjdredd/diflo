@@ -1,5 +1,5 @@
 #include "data.hpp"
-// include root crap
+
 
 //******************************************************************************
 //*Tree    :out       : out                                                    *
@@ -68,21 +68,28 @@
 
 ROOTData::ROOTData() {}
 
-ROOTData::~ROOTData() {
-	delete tfin;
-}
+ROOTData::~ROOTData() {}
 
-ROOTData::ROOTData(char * file_name) : cur_event(0) {
-	tfin = new TFile(file_name);
-	tin = tfin->Get("out");
+ROOTData::ROOTData(char * file_name) : tfin(file_name), cur_event(0) {
+	tin = tfin.Get("out");
 	nentries = tin->GetEntries();
+	tin->Print();
 }
 
 bool ROOTData::FetchEvent(event &e) {
 
 	unsigned npart;
+	bool ret;
+
+	e.particles.clear();
+
+	tin->SetBranchStatus("*", 0);
+	tin->SetBranchStatus("npart", 1);
 	tin->SetBranchAddress("npart", &npart);
-	tin->GetEntry(cur_event);
+	if (tin->GetEntry(cur_event) <= 0) return false;
+
+	e.reserve(npart);
+
 	double *x = new double[npart],
 		*y = new double[npart],
 		*z = new double[npart],
@@ -92,6 +99,7 @@ bool ROOTData::FetchEvent(event &e) {
 		*E = new double[npart];
 	int *id = new int[npart];
 
+	tin->SetBranchStatus("*", 1);
 	tin->SetBranchAddress("x", x);
 	tin->SetBranchAddress("y", y);
 	tin->SetBranchAddress("z", z);
@@ -101,6 +109,31 @@ bool ROOTData::FetchEvent(event &e) {
 	tin->SetBranchAddress("E", E);
 	tin->SetBranchAddress("id", id);
 
-	tin->GetEntry(cur_event);
-	cur_event++;
+	if (tin->GetEntry(cur_event) > 0) {
+		// copy all that stuff
+		particle p;
+		for (unsigned i = 0; i < npart; i++) {
+			p.type = id[i];
+			p.Px = px[i];
+			p.Py = py[i];
+			p.Pz = pz[i];
+			p.P0 = E[i];
+			p.x = x[i];
+			p.y = y[i];
+			p.z = z[i];
+			e.add_particle(p);
+		}
+		ret = true;
+	} else ret = false;
+
+	delete x;
+	delete y;
+	delete z;
+	delete px;
+	delete py;
+	delete pz;
+	delete E;
+	delete id;
+
+	return ret;
 }
