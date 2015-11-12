@@ -78,7 +78,7 @@ ROOTData::ROOTData(char * file_name) : tfin(file_name), cur_event(0) {
 
 bool ROOTData::FetchEvent(event &e) {
 
-	unsigned npart;
+	int npart;
 	bool ret;
 
 	e.particles.clear();
@@ -123,6 +123,7 @@ bool ROOTData::FetchEvent(event &e) {
 			p.z = z[i];
 			e.add_particle(p);
 		}
+		cur_event++;
 		ret = true;
 	} else ret = false;
 

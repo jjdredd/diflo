@@ -41,10 +41,10 @@ int main(int argc, char** argv){
   
 	char c, *file_data = NULL, *file_input = NULL;
 	bool alice = false, req_input = true, pick = false,
-		angle = false, in_octants = true;
+		angle = false, in_octants = true, root = false;
 	DataVersion dversion;
 	int type = 0;
-	while ((c = getopt (argc, argv, "A:P:H:i:t:28a")) != -1) {
+	while ((c = getopt (argc, argv, "A:P:H:i:t:R:28a")) != -1) {
 
 		switch (c) {
 
@@ -86,6 +86,12 @@ int main(int argc, char** argv){
 		case 'a':
 			angle = true;
 			in_octants = false;
+			break;
+
+		case 'R':
+			root = true;
+			req_input = false;
+			file_data = optarg;
 			break;
 
 		case '?':
@@ -135,12 +141,56 @@ int main(int argc, char** argv){
 						       numevents);
 				rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
 							     numevents, mean);
+
 				files[i] << rsn << '\t' << start
 					 << '\t' << mean
 					 << '\t' << rsdm << std::endl;
 			}
 		}
 
+		return 0;
+	}
+
+	if (root) {
+
+		ROOTData D(file_data);
+
+		Handedness H;
+		std::ofstream files[8];
+
+		for (unsigned i = 0; i < 8; i++) {
+			std::string name = "res/oct_multip_"
+				+ std::to_string(i);
+			files[i].open(name, std::ofstream::out);
+		}
+
+
+		std::vector<double> etas[8], evet;
+		std::vector<unsigned> evnm;
+
+		event e;
+
+		for (unsigned j = 0; j < 5; j++) {
+			std::cout << "event " << j << std::endl;
+			D.FetchEvent(e);
+			H.EventEta(e, evet, evnm);
+			for(unsigned i = 0; i < 8; i++) {
+				std::cout << '\t' << evet[i] << std::endl;
+				etas[i].push_back(evet[i]);
+			}
+		}
+
+		for(unsigned i = 0; i < 8; i++){
+			double rsn, mean, rsdm;
+			unsigned numevents = etas[i].size();
+			rsn = 1/sqrt(numevents);
+			mean = gsl_stats_mean (&etas[i][0], 1,
+					       numevents);
+			rsdm = rsn * gsl_stats_sd_m (&etas[i][0], 1,
+						     numevents, mean);
+			files[i] << rsn << '\t' << '\t' << mean
+				 << '\t' << rsdm << std::endl;
+		}
 		return 0;
 	}
 
