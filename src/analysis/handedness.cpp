@@ -8,8 +8,17 @@ static bool momemtum_test(particle &a, particle &b, particle &c){
 }
 #endif
 
+
+//
+// Handedness base class
+//
+
+Handedness::Handedness() {}
+
+Handedness::~Handedness() {}
+
 // determine the octant in momentum space
-unsigned octant(particle &p){
+unsigned Handedness::sub_volume(particle &p){
 	if (p.Px > 0){
 		if (p.Py > 0){
 			if (p.Pz > 0) return 0;
@@ -32,17 +41,11 @@ unsigned octant(particle &p){
 	} 
 }
 
-unsigned diant(particle &p, double RPAngle) {
-	if ((-p.Px*tan(RPAngle) + p.Py) > 0) return 0;
-	else return 1;
-}
-
-
 /* calculate eta for event consisting of n particles stored in p
  * write results in etas array (for 8 octants), writes the number
  * of particle triplet combinations that were used to calculate etas */
-void EventEta(event &e, std::vector<double> &etas,
-	      std::vector<unsigned> &comb_num, double RPAngle){
+void Handedness::EventEta(event &e, std::vector<double> &etas,
+			  std::vector<unsigned> &comb_num){
 
 	double eta[8], abseta[8], mxpr;
 	unsigned oct, i, j, k;
@@ -58,11 +61,11 @@ void EventEta(event &e, std::vector<double> &etas,
 	/* traverse all particles in this
 	 * event (isub, inum) */
 	for (i = 0; i < n; i++){
-		oct = SubVolume(p[i], RPAngle);
+		oct = sub_volume(p[i]);
 		for( j = i + 1; j < n; j++){
-			if(oct != SubVolume(p[j], RPAngle)) continue;
+			if(oct != sub_volume(p[j])) continue;
 			for(k = j + 1; k < n; k++){
-				if(oct != SubVolume(p[k], RPAngle)) continue;
+				if(oct != sub_volume(p[k])) continue;
 				/* first sort particles */
 				/* always i < j < k
 				 * -> if presorted then
@@ -94,4 +97,16 @@ void EventEta(event &e, std::vector<double> &etas,
 			etas[oct] = eta[oct] / abseta[oct];
 		}
 	}
+}
+
+
+//
+// HandednessExp
+//
+
+HandednessExp::HandednessExp() : RPAngle(0) {}
+
+unsigned HandednessExp::sub_volume(particle &p) {
+	if ((-p.Px*tan(RPAngle) + p.Py) > 0) return 0;
+	else return 1;
 }

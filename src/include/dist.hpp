@@ -15,8 +15,8 @@ class distribution {
 public:
 	distribution(unsigned ny = 100, unsigned nphi = 100);
 	~distribution();
-	void DataDist(data&, int type, int charge, bool meson);
-	void DataDist(data&);
+	void DataDist(DataHSD&, int type, int charge, bool meson);
+	void DataDist(DataHSD&);
 	void DistTransform(double rapidity);
 	void PrintFlows(std::ostream &s);
 	void WriteDistr(std::ostream &s);

@@ -21,7 +21,7 @@ int main(int argc, char **argv){
 	//
 
 	std::ifstream s(argv[3]);
-	data D(s, HSD_VER_PHSD);
+	DataPHSD D(s);
 	s.close();
 	// mesons
 	{

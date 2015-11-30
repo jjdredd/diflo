@@ -29,7 +29,7 @@ unsigned distribution::BinPhi(double angle) {
 	return phibin;
 }
 
-void distribution::DataDist(data& D){
+void distribution::DataDist(DataHSD& D){
 
 	double rapidity, angle;
 	unsigned ybin, phibin, pnum = D.NumberOfParticles();
@@ -56,7 +56,7 @@ void distribution::DataDist(data& D){
 			d[i][j] /= pnum;
 }
 
-void distribution::DataDist(data& D, int type, int charge, bool meson){
+void distribution::DataDist(DataHSD& D, int type, int charge, bool meson){
 
 	double rapidity, angle;
 	int ybin, phibin, pnum = D.NumberOfParticles();

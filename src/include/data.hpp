@@ -68,25 +68,46 @@ enum DataVersion {
 	HSD_VER_PHSD,
 };
 
-class data {
+class DataHSD {
 
 public:
 	unsigned ISUBS, NUM, A, NParticles;
 	double Elab, Time;
 	event **P;
-	data(std::ifstream &s, DataVersion v, bool pick = false, int type = 0);
-	~data();
+	DataHSD();
+	DataHSD(std::ifstream &s, bool pick = false, int type = 0);
+	virtual ~DataHSD();
 	unsigned NumberOfParticles();
-	void readin_particles(std::ifstream &s, bool mesons);
+	void readin_particles(std::ifstream &, bool mesons);
 
 private:
-	DataVersion hsd_ver;
 	int type, charge;
 	bool pick;
-	bool parse_input_line(char *str, int *isub, int *irun, particle *p);
-
+	virtual bool parse_input_line(char *str, int *isub, int *irun,
+				       particle *p);
 };
 
+class DataHSDC : public DataHSD {		// with coordiantes
+
+public:
+	DataHSDC();
+	DataHSDC(std::ifstream &s, bool pick = false, int type = 0);
+
+private:
+	virtual bool parse_input_line(char *str, int *isub, int *irun,
+				      particle *p);
+};
+
+class DataPHSD : public DataHSD { // for PHSD
+
+public:
+	DataPHSD();
+	DataPHSD(std::ifstream &s, bool pick = false, int type = 0);
+
+private:
+	virtual bool parse_input_line(char *str, int *isub, int *irun,
+				      particle *p);
+};
 
 
 //

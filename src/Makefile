@@ -1,6 +1,6 @@
 WFLAGS = -W -Wall -Wextra
 IFLAGS = -iquote $(shell pwd)/include
-OPTFLAGS = -march=native -ffast-math -O3 -funroll-loops
+OPTFLAGS = -march=native -ffast-math -O3 -funroll-loops # -msse
 export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS) -g
 export CXXFLAGS = $(CFLAGS) -std=c++11
 export LDFLAGS = -lm
@@ -18,7 +18,7 @@ sdnopt.elf: sdnopt.cpp inputlib analys
 	$(INPUT_F) analysis/handedness.o \
 	-o sdnopt.elf
 
-multip.elf: multip.cpp
+multip.elf: multip.cpp $(INPUT_F)
 	g++ $(CXXFLAGS) $(LDFLAGS) multip.cpp \
 	$(INPUT_F) -o multip.elf
 
@@ -39,4 +39,4 @@ analys:
 clean:
 	$(MAKE) -C input clean
 	$(MAKE) -C analysis clean
-	rm diflo.elf diflo.server.elf64 sdnopt.elf multip.elf
+	rm diflo.elf sdnopt.elf multip.elf
