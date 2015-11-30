@@ -112,7 +112,10 @@ int main(int argc, char** argv){
 
 		ofile.open("aaa.txt", std::ofstream::out);
 
-		unsigned w = 50, start = 400;
+		// some magic variables for now
+		unsigned w = 100, start = 200;
+		double ETA_THRES = 0.001;
+		// 
 		std::vector<double> etas[2], evet, RatioS;
 		std::vector<unsigned> evnm;
 
@@ -121,12 +124,18 @@ int main(int argc, char** argv){
 
 		while (D.FetchNumEvent(e, start, start + w)) {
 			double prev_ratio = 0;
-			for (double rpa = 0; rpa < M_PI_2; rpa += 0.2) {
+			for (double rpa = 0; rpa < M_PI_2; rpa += 0.05) {
 				H.RPAngle = rpa;
 				H.EventEta(e, evet, evnm);
 
+				if ((fabs(evet[0]) < ETA_THRES)
+				    && (fabs(evet[1]) < ETA_THRES)) continue;
+
 				double ratio = fabs(evet[0] - evet[1])
 					/ (fabs(evet[0]) + fabs(evet[1]));
+
+				std::cout << rpa << '\t' << ratio << std::endl;
+
 				if (ratio > prev_ratio) prev_ratio = ratio;
 			}
 			RatioS.push_back(prev_ratio);
