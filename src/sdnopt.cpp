@@ -131,8 +131,10 @@ int main(int argc, char** argv){
 				if ((fabs(evet[0]) < ETA_THRES)
 				    && (fabs(evet[1]) < ETA_THRES)) continue;
 
-				double ratio = fabs(evet[0] - evet[1])
-					/ (fabs(evet[0]) + fabs(evet[1]));
+				// double ratio = fabs(evet[0] - evet[1])
+				// 	/ (fabs(evet[0]) + fabs(evet[1]));
+
+				double ratio =fabs(evet[0]) + fabs(evet[1]);
 
 				std::cout << rpa << '\t' << ratio << std::endl;
 
