@@ -108,46 +108,55 @@ int main(int argc, char** argv){
 	if (alice && angle_anal) {
 
 		HandednessExp H;
-		std::ofstream ofile;
-
-		ofile.open("aaa.txt", std::ofstream::out);
-
+		unsigned w = 50;
+		std::string base_fname = "res/aaa.txt_";
+		std::ofstream dep_out;
 		// some magic variables for now
-		unsigned w = 100, start = 200;
 		double ETA_THRES = 0.001;
 		// 
-		std::vector<double> etas[2], evet, RatioS;
-		std::vector<unsigned> evnm;
+		dep_out.open("res/ratio_vs_n.txt", std::ofstream::out);
 
-		ALICEData D(file_data);
-		event e;
+		for (unsigned start = 50; start < 650; start += w) {
+			std::ofstream ofile;
+			ofile.open(base_fname + std::to_string(start),
+				   std::ofstream::out);
 
-		while (D.FetchNumEvent(e, start, start + w)) {
-			double prev_ratio = 0;
-			for (double rpa = 0; rpa < M_PI_2; rpa += 0.05) {
-				H.RPAngle = rpa;
-				H.EventEta(e, evet, evnm);
+			std::vector<double> evet, RatioS;
+			std::vector<unsigned> evnm;
 
-				if ((fabs(evet[0]) < ETA_THRES)
-				    && (fabs(evet[1]) < ETA_THRES)) continue;
+			ALICEData D(file_data);
+			event e;
 
-				// double ratio = fabs(evet[0] - evet[1])
-				// 	/ (fabs(evet[0]) + fabs(evet[1]));
+			while (D.FetchNumEvent(e, start, start + w)) {
+				double prev_ratio = 0;
+				for (double rpa = 0;
+				     rpa < M_PI_2; rpa += 0.05) {
+					H.RPAngle = rpa;
+					H.EventEta(e, evet, evnm);
 
-				double ratio =fabs(evet[0]) + fabs(evet[1]);
+					// if ((fabs(evet[0]) < ETA_THRES)
+					//     && (fabs(evet[1]) < ETA_THRES)) continue;
 
-				std::cout << rpa << '\t' << ratio << std::endl;
+					// double ratio = fabs(evet[0] - evet[1])
+					// 	/ (fabs(evet[0]) + fabs(evet[1]));
 
-				if (ratio > prev_ratio) prev_ratio = ratio;
+					double ratio =fabs(evet[0])
+						+ fabs(evet[1]);
+
+					if (ratio > prev_ratio)
+						prev_ratio = ratio;
+				}
+				RatioS.push_back(prev_ratio);
 			}
-			RatioS.push_back(prev_ratio);
-		}
-		for (unsigned i = 0; i < RatioS.size(); i++)
-			ofile << RatioS[i] << std::endl;
+			for (unsigned i = 0; i < RatioS.size(); i++)
+				ofile << RatioS[i] << std::endl;
 
-		std::cout << "Mean Ratio is "
-			  << gsl_stats_mean (&RatioS[0], 1, RatioS.size())
-			  << std::endl;
+			dep_out << start << '\t'
+				<< gsl_stats_mean (&RatioS[0], 1,
+						   RatioS.size()) << std::endl;
+
+			ofile.close();
+		}
 
 		return 0;
 	}
