@@ -110,3 +110,29 @@ unsigned HandednessExp::sub_volume(particle &p) {
 	if ((-p.Px*tan(RPAngle) + p.Py) > 0) return 0;
 	else return 1;
 }
+
+double MaxHandedRatio(event& e, double& angle) {
+	double prev_ratio = 0;
+	HandednessExp H;
+	std::vector<double> evet;
+	std::vector<unsigned> evnm;
+	for (double rpa = 0; rpa < M_PI_2; rpa += 0.05) {
+		H.RPAngle = rpa;
+		H.EventEta(e, evet, evnm);
+
+		// if ((fabs(evet[0]) < ETA_THRES)
+		//     && (fabs(evet[1]) < ETA_THRES)) continue;
+
+		// double ratio = fabs(evet[0] - evet[1])
+		// 	/ (fabs(evet[0]) + fabs(evet[1]));
+
+		double ratio =fabs(evet[0])
+			+ fabs(evet[1]);
+
+		if (ratio > prev_ratio) {
+			prev_ratio = ratio;
+			angle = rpa;
+		}
+	}
+	return prev_ratio;
+}

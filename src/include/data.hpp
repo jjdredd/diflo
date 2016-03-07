@@ -33,6 +33,7 @@ struct particle {
 	double rapid();
 	double aangle();
 	double p();
+	double Pt();
 	bool of_type(int t, int c, bool m);
 };
 

@@ -44,4 +44,6 @@ private:
 	virtual unsigned sub_volume(particle &p);
 };
 
+double MaxHandedRatio(event&, double&);
+
 #endif	// HANDED_HPP

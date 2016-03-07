@@ -9,6 +9,7 @@
  *****************************************************************************/
 
 #include "handedness.hpp"
+#include "dist.hpp"
 #include "data.hpp"
 
 #include <cmath>
@@ -18,9 +19,6 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-/* HSD and PHSD seem to have slightly different output formats,
- * to take this into account, a PHSD preprocessor variable is used */
-/* #define PHSD */
 
 void print_usage() {
 	printf ("sdnopt.elf: calculate handedness for various data\n"
@@ -107,13 +105,9 @@ int main(int argc, char** argv){
 
 	if (alice && angle_anal) {
 
-		HandednessExp H;
 		unsigned w = 50;
 		std::string base_fname = "res/aaa.txt_";
 		std::ofstream dep_out;
-		// some magic variables for now
-		double ETA_THRES = 0.001;
-		// 
 		dep_out.open("res/ratio_vs_n.txt", std::ofstream::out);
 
 		for (unsigned start = 50; start < 650; start += w) {
@@ -121,35 +115,20 @@ int main(int argc, char** argv){
 			ofile.open(base_fname + std::to_string(start),
 				   std::ofstream::out);
 
-			std::vector<double> evet, RatioS;
-			std::vector<unsigned> evnm;
-
+			std::vector<double> RatioS, RPAngleS;
 			ALICEData D(file_data);
 			event e;
 
 			while (D.FetchNumEvent(e, start, start + w)) {
-				double prev_ratio = 0;
-				for (double rpa = 0;
-				     rpa < M_PI_2; rpa += 0.05) {
-					H.RPAngle = rpa;
-					H.EventEta(e, evet, evnm);
-
-					// if ((fabs(evet[0]) < ETA_THRES)
-					//     && (fabs(evet[1]) < ETA_THRES)) continue;
-
-					// double ratio = fabs(evet[0] - evet[1])
-					// 	/ (fabs(evet[0]) + fabs(evet[1]));
-
-					double ratio =fabs(evet[0])
-						+ fabs(evet[1]);
-
-					if (ratio > prev_ratio)
-						prev_ratio = ratio;
-				}
-				RatioS.push_back(prev_ratio);
+				double ratio, max_angle, rpangle;
+				ratio = MaxHandedRatio(e, max_angle);
+				rpangle = RPA_by_multip(e);
+				RatioS.push_back(ratio);
+				RPAngleS.push_back(max_angle - rpangle);
 			}
 			for (unsigned i = 0; i < RatioS.size(); i++)
-				ofile << RatioS[i] << std::endl;
+				ofile << RatioS[i] << '\t'
+				      << RPAngleS[i] << std::endl;
 
 			dep_out << start << '\t'
 				<< gsl_stats_mean (&RatioS[0], 1,
@@ -217,6 +196,8 @@ int main(int argc, char** argv){
 	//
 
 	switch (dversion) {
+
+		// D is leaking everywhere!
 
 	case HSD_VER_ORIG:
 		D = new DataHSD(s, pick, type);
@@ -288,8 +269,6 @@ int main(int argc, char** argv){
 	std::vector<unsigned> evnm;
 	HandednessExp H;
 
-	etas[0].reserve(D->ISUBS * D->NUM);
-	etas[1].reserve(D->ISUBS * D->NUM);
 	evet.reserve(2);
 	evnm.reserve(2);
 

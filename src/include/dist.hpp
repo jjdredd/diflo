@@ -36,4 +36,9 @@ private:
 	unsigned BinPhi(double angle);
 };
 
+double RPA_by_multip(event&);
+
+double RPA_by_Pt(event&);
+
+
 #endif	// DIST_HPP

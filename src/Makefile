@@ -4,6 +4,7 @@ OPTFLAGS = -march=native -ffast-math -O3 -funroll-loops # -msse
 export CFLAGS = $(IFLAGS) $(WFLAGS) $(OPTFLAGS) -g
 export CXXFLAGS = $(CFLAGS) -std=c++11
 export LDFLAGS = -lm
+# for the below libs we should make an .a lib with ar ?
 INPUT_F = input/data.o
 ANALYS_F = analysis/fft.o analysis/dist.o analysis/momentum.o \
 analysis/handedness.o
@@ -15,7 +16,7 @@ sdnopt.elf: CXXFLAGS += -I/home/ltph/usubov/usr/include
 sdnopt.elf: LDFLAGS += -L/home/ltph/usubov/usr/lib -lgsl -lgslcblas
 sdnopt.elf: sdnopt.cpp inputlib analys
 	g++ $(CXXFLAGS) $(LDFLAGS) sdnopt.cpp \
-	$(INPUT_F) analysis/handedness.o \
+	$(INPUT_F) $(ANALYS_F) \
 	-o sdnopt.elf
 
 multip.elf: multip.cpp $(INPUT_F)

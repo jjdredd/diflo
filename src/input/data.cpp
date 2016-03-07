@@ -27,7 +27,11 @@ double particle::rapid(){
 }
 
 double particle::p(){
-	return sqrtf(Px*Px + Py*Py + Pz*Pz);
+	return sqrt(Px*Px + Py*Py + Pz*Pz);
+}
+
+double particle::Pt() {
+	return sqrt(Px*Px + Py*Py);
 }
 
 double particle::aangle(){
