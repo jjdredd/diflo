@@ -119,7 +119,7 @@ void distribution::WriteDistrFT(std::ostream &s) {
 double RPA_by_multip(event& e) {
 	double x = 0, y = 0;
 	for (particle p : e.particles) {
-		x += p.Px / p.Pt();	// cos()
+		x += fabs(p.Px) / p.Pt();	// cos()
 		y += p.Py / p.Pt();	// sin()
 	}
 	return atan(y/x);
@@ -128,7 +128,7 @@ double RPA_by_multip(event& e) {
 double RPA_by_Pt(event& e) {
 	double x = 0, y = 0;
 	for (particle p : e.particles) {
-		x += p.Px;	// cos()
+		x += fabs(p.Px);	// cos()
 		y += p.Py;	// sin()
 	}
 	return atan(y/x);

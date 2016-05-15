@@ -110,7 +110,7 @@ int main(int argc, char** argv){
 		std::ofstream dep_out;
 		dep_out.open("res/ratio_vs_n.txt", std::ofstream::out);
 
-		for (unsigned start = 50; start < 650; start += w) {
+		for (unsigned start = 250; start < 650; start += w) {
 			std::ofstream ofile;
 			ofile.open(base_fname + std::to_string(start),
 				   std::ofstream::out);
@@ -119,12 +119,20 @@ int main(int argc, char** argv){
 			ALICEData D(file_data);
 			event e;
 
+			std::cout << "start " << start << ", width "
+				  << w << ", output file "
+				  << base_fname + std::to_string(start)
+				  << std::endl;
 			while (D.FetchNumEvent(e, start, start + w)) {
 				double ratio, max_angle, rpangle;
 				ratio = MaxHandedRatio(e, max_angle);
 				rpangle = RPA_by_multip(e);
 				RatioS.push_back(ratio);
 				RPAngleS.push_back(max_angle - rpangle);
+				std::cout << '\t' << "ratio " << ratio
+					  << ", diff "
+					  << max_angle - rpangle
+					  << std::endl;
 			}
 			for (unsigned i = 0; i < RatioS.size(); i++)
 				ofile << RatioS[i] << '\t'
