@@ -138,9 +138,13 @@ int main(int argc, char** argv){
 				ofile << RatioS[i] << '\t'
 				      << RPAngleS[i] << std::endl;
 
-			dep_out << start << '\t'
-				<< gsl_stats_mean (&RatioS[0], 1,
-						   RatioS.size()) << std::endl;
+			double mean, rsn, rsdm;
+			rsn = 1 / sqrt(start);
+			mean = gsl_stats_mean (&RatioS[0], 1, RatioS.size());
+			rsdm = rsn * gsl_stats_sd_m (&RatioS[0], 1,
+						     RatioS.size(), mean);
+			dep_out << rsn << '\t' << start << '\t'
+				<< mean << '\t' << rsdm << std::endl;
 
 			ofile.close();
 		}
