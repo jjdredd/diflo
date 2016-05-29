@@ -16,4 +16,4 @@ handedness.o: handedness.cpp
 	g++ $(CXXFLAGS) -c -o handedness.o handedness.cpp
 
 clean:
-	rm dist.o fft.o momentum.o handedness.o
+	-rm dist.o fft.o momentum.o handedness.o

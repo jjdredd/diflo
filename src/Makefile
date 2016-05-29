@@ -40,4 +40,4 @@ analys:
 clean:
 	$(MAKE) -C input clean
 	$(MAKE) -C analysis clean
-	rm diflo.elf sdnopt.elf multip.elf
+	-rm diflo.elf sdnopt.elf multip.elf

@@ -1,4 +1,5 @@
 #include "handedness.hpp"
+#include <gsl/gsl_statistics_double.h>
 
 
 #if 0
@@ -135,4 +136,28 @@ double MaxHandedRatio(event& e, double& angle) {
 		}
 	}
 	return prev_ratio;
+}
+
+void HandedStatExp(std::vector<event>& Events, double angle,
+		   std::vector<double>& mean, std::vector<double>& rsdm) {
+
+	std::vector<double> hs[2];
+	HandednessExp H;
+
+	mean.reserve(2);
+	rsdm.reserve(2);
+	for (auto &e : Events) {
+		std::vector<double> eta;
+		std::vector<unsigned> num;
+		H.RPAngle = e.RPA + angle;
+		H.EventEta(e, eta, num);
+		hs[0].push_back(eta[0]);
+		hs[1].push_back(eta[1]);
+	}
+	for (unsigned i = 0; i < 2; i++) {
+		double rsn = 1 / sqrt(Events.size());
+		mean[i] = gsl_stats_mean (&hs[i][0], 1, Events.size());
+		rsdm[i] = rsn * gsl_stats_sd_m (&hs[i][0], 1,
+						Events.size(), mean[i]);
+	}
 }

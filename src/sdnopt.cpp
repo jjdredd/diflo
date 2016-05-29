@@ -107,45 +107,33 @@ int main(int argc, char** argv){
 
 		unsigned w = 50;
 		std::string base_fname = "res/aaa.txt_";
-		std::ofstream dep_out;
-		dep_out.open("res/ratio_vs_n.txt", std::ofstream::out);
 
 		for (unsigned start = 250; start < 650; start += w) {
 			std::ofstream ofile;
 			ofile.open(base_fname + std::to_string(start),
 				   std::ofstream::out);
 
-			std::vector<double> RatioS, RPAngleS;
 			ALICEData D(file_data);
 			event e;
+			std::vector<event> Events;
 
 			std::cout << "start " << start << ", width "
 				  << w << ", output file "
 				  << base_fname + std::to_string(start)
 				  << std::endl;
 			while (D.FetchNumEvent(e, start, start + w)) {
-				double ratio, max_angle, rpangle;
-				ratio = MaxHandedRatio(e, max_angle);
-				rpangle = RPA_by_multip(e);
-				RatioS.push_back(ratio);
-				RPAngleS.push_back(max_angle - rpangle);
-				std::cout << '\t' << "ratio " << ratio
-					  << ", diff "
-					  << max_angle - rpangle
-					  << std::endl;
+				e.RPA = RPA_by_multip(e);
+				Events.push_back(e);
 			}
-			for (unsigned i = 0; i < RatioS.size(); i++)
-				ofile << RatioS[i] << '\t'
-				      << RPAngleS[i] << std::endl;
-
-			double mean, rsn, rsdm;
-			rsn = 1 / sqrt(start);
-			mean = gsl_stats_mean (&RatioS[0], 1, RatioS.size());
-			rsdm = rsn * gsl_stats_sd_m (&RatioS[0], 1,
-						     RatioS.size(), mean);
-			dep_out << rsn << '\t' << start << '\t'
-				<< mean << '\t' << rsdm << std::endl;
-
+			std::cout << Events.size() << " events in"
+				  << std::endl;
+			for (double angle = 0; angle < M_PI; angle += 0.1) {
+				std::vector<double> mean, rsdm;
+				HandedStatExp(Events, angle, mean, rsdm);
+				ofile << angle << '\t' << mean[0] << '\t'
+					<< rsdm[0] << '\t' << mean[1] << '\t'
+					<< rsdm[1] << std::endl;
+			}
 			ofile.close();
 		}
 

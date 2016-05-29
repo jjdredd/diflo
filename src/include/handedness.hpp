@@ -46,4 +46,7 @@ private:
 
 double MaxHandedRatio(event&, double&);
 
+void HandedStatExp(std::vector<event>&, double,
+		std::vector<double>&, std::vector<double>&);
+
 #endif	// HANDED_HPP

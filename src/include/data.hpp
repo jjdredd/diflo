@@ -52,6 +52,7 @@ struct event {
 
 	std::vector<particle> particles;
 	int A;
+	double RPA;
 	event();
 	~event();
 	void add_particle(particle &p);
