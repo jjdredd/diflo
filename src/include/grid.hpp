@@ -21,17 +21,19 @@ Grid MinGrid(const Grid &, const Grid &);
 class ParticleGrid {
 
 public:
-	ParticleGrid(Grid &);
+	ParticleGrid(Grid &, unsigned);
 	virtual ~ParticleGrid();
 
 	void Populate(event &);
 
 private:
 	bool cell_valid(unsigned, unsigned, unsigned);
+	std::vector<unsigned> space_to_grid(std::vector<unsigned> &);
 
 	Grid g;
+	unsigned min_particles;
 	std::vector<particle> ***p;
-	unsigned char ***valid;
+	unsigned char ***p_cnt;
 
 };
 
