@@ -5,32 +5,32 @@
 
 #include "data.hpp"
 
-struct Grid {
+struct SymGrid {
 
-	double dims[3][2];	// 0 - start, 1 - end
+	double dims[3];
 	double h[3];
 	unsigned Nodes[3];
 
-	Grid(double, unsigned);
-	bool operator==(Grid &);
+	SymGrid(double, unsigned);
+	bool operator==(SymGrid &);
 };
 
-Grid MinGrid(const Grid &, const Grid &);
+Grid MinGrid(const SymGrid &, const SymGrid &);
 
 
 class ParticleGrid {
 
 public:
-	ParticleGrid(Grid &, unsigned);
+	ParticleGrid(SymGrid &, unsigned);
 	virtual ~ParticleGrid();
 
 	void Populate(event &);
 
 private:
 	bool cell_valid(unsigned, unsigned, unsigned);
-	std::vector<unsigned> space_to_grid(std::vector<unsigned> &);
+	std::vector<int> space_to_grid(std::vector<unsigned> &);
 
-	Grid g;
+	SymGrid g;
 	unsigned min_particles;
 	std::vector<particle> ***p;
 	unsigned char ***p_cnt;

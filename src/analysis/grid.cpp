@@ -5,23 +5,21 @@
 
 
 //
-// struct Grid
+// struct SymGrid
 // 
 
-Grid::Grid(double size, unsigned Nn) {
+SymGrid::SymGrid(double size, unsigned Nn) {
 	// create symmetric grid by size and Nn nodes
 	for (unsigned i = 0; i < 3; i++){
-		dims[i][0] = -size;
-		dims[i][1] = size;
+		dims[i] = size;
 		Nodes[i] = 2*Nn;
-		h[i] = (dims[i][1] - dims[i][0]) / Nodes[i];
+		h[i] = 2*dims[i] / Nodes[i];
 	}
 }
 
-bool Grid::operator==(Grid &o) {
+bool SymGrid::operator==(SymGrid &o) {
 	for (unsigned i = 0; i < 3; i++){
-		if (fabs(dims[i][0] - o.dims[i][0]) > h[i]* h[i]
-		    || fabs(dims[i][1] - o.dims[i][1]) > h[i]* h[i]){
+		if (fabs(dims[i] - o.dims[i]) > h[i]* h[i]){
 			return false;
 		}
 		if (Nodes[i] != o.Nodes[i]) {
@@ -33,18 +31,14 @@ bool Grid::operator==(Grid &o) {
 
 
 // MinGrid is broken do not use
-Grid MinGrid(const Grid &g_1, const Grid &g_2) {
-	Grid g;
+Grid MinGrid(const SymGrid &g_1, const SymGrid &g_2) {
+	SymGrid g;
 	// are grids equal?
 	// change g.h as well
 	for (unsigned i = 0; i < 3; i++){
-		g.dims[i][0] = std::max(g_1.dims[i][0], g_2.dims[i][0]);
-		g.dims[i][1] = std::min(g_1.dims[i][1], g_2.dims[i][1]);
-
-		g.Nodes[i][0] = std::max(g_1.Nodes[i][0], g_2.Nodes[i][0]);
-		g.Nodes[i][1] = std::min(g_1.Nodes[i][1], g_2.Nodes[i][1]);
-
-1		h[i] = (dims[i][1] - dims[i][0]) / Nodes[i];
+		g.dims[i] = std::max(g_1.dims[i], g_2.dims[i]);
+		g.Nodes[i] = std::max(g_1.Nodes[i], g_2.Nodes[i]);
+1		h[i] = 2*dims[i] / Nodes[i];
 	}
 	return g;
 }
@@ -54,7 +48,7 @@ Grid MinGrid(const Grid &g_1, const Grid &g_2) {
 // class ParticleGrid
 // 
 
-ParticleGrid::ParticleGrid(Grid &g, unsigned mp) : g(g), min_partiles(mp) {
+ParticleGrid::ParticleGrid(SymGrid &g, unsigned mp) : g(g), min_partiles(mp) {
 	p = new void**[g.Nodes[0]];
 	p_cnt = new void**[g.Nodes[0]];
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
@@ -95,14 +89,21 @@ bool ParticleGrid::cell_valid(unsigned i, unsigned j, unsigned k) {
 	return true;
 }
 
-std::vector<unsigned> ParticleGrid::space_to_grid(std::vector<unsigned> &x) {
-	std::vector<unsigned> v(3);
+std::vector<int> ParticleGrid::space_to_grid(std::vector<unsigned> &x) {
+	std::vector<int> v(3);
 	for (unsigned i = 0; i < 3; i++) {
-		sh_x = x[i] + dims ???
-		v[i] = static_cast<unsigned>
+		sh_x = x[i] + g.dims[i];
+		v[i] = static_cast<int> floor(sh_x / g.h[i]);
+		if (v[i] < 0) v[i] = 0;
 	}
+	return v;
 }
 
 void ParticleGrid::Populate(event &e) {
-
+	for (unsigned n = 0; n < e.particles.size(); n++) {
+		particle ptcl = e.particles[n];
+		std::vector<double> x{ptcl.x, ptcl.y, ptcl.z};
+		std::vector<int> v = space_to_grid(x);
+		p[ v[0] ][ v[1] ][ v[2] ].push_back(ptcl);
+	}
 }
