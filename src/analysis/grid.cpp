@@ -105,5 +105,26 @@ void ParticleGrid::Populate(event &e) {
 		std::vector<double> x{ptcl.x, ptcl.y, ptcl.z};
 		std::vector<int> v = space_to_grid(x);
 		p[ v[0] ][ v[1] ][ v[2] ].push_back(ptcl);
+		p_cnt[ v[0] ][ v[1] ][ v[2] ] = p[ v[0] ][ v[1] ][ v[2] ].size();
+	}
+}
+
+void ParticleGrid::Clear() {
+	for (unsigned i = 0; i < g.dims[0]; i++) {
+		for (unsigned j = 0; j < g.dims[1]; j++) {
+			for (unsigned k = 0; k < g.dims[2]; k++) {
+				p[i][j][k].clear();
+			}
+		}
+	}
+}
+
+void ParticleGrid::ShrinkToFit() {
+	for (unsigned i = 0; i < g.dims[0]; i++) {
+		for (unsigned j = 0; j < g.dims[1]; j++) {
+			for (unsigned k = 0; k < g.dims[2]; k++) {
+				p[i][j][k].shrink_to_fit();
+			}
+		}
 	}
 }

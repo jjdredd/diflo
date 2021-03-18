@@ -25,6 +25,8 @@ public:
 	virtual ~ParticleGrid();
 
 	void Populate(event &);
+	void Clear();
+	void SringToFit();
 
 private:
 	bool cell_valid(unsigned, unsigned, unsigned);
