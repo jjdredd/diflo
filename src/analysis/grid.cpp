@@ -31,14 +31,14 @@ bool SymGrid::operator==(SymGrid &o) {
 
 
 // MinGrid is broken do not use
-Grid MinGrid(const SymGrid &g_1, const SymGrid &g_2) {
-	SymGrid g;
+SymGrid MinGrid(const SymGrid &g_1, const SymGrid &g_2) {
+	SymGrid g(0, 0);
 	// are grids equal?
 	// change g.h as well
 	for (unsigned i = 0; i < 3; i++){
 		g.dims[i] = std::max(g_1.dims[i], g_2.dims[i]);
 		g.Nodes[i] = std::max(g_1.Nodes[i], g_2.Nodes[i]);
-1		h[i] = 2*dims[i] / Nodes[i];
+		g.h[i] = 2*g.dims[i] / g.Nodes[i];
 	}
 	return g;
 }
@@ -48,15 +48,15 @@ Grid MinGrid(const SymGrid &g_1, const SymGrid &g_2) {
 // class ParticleGrid
 // 
 
-ParticleGrid::ParticleGrid(SymGrid &g, unsigned mp) : g(g), min_partiles(mp) {
-	p = new void**[g.Nodes[0]];
-	p_cnt = new void**[g.Nodes[0]];
+ParticleGrid::ParticleGrid(SymGrid &g, unsigned mp) : g(g), min_particles(mp) {
+	p = new std::vector<particle>**[g.Nodes[0]];
+	p_cnt = new int**[g.Nodes[0]];
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
-		p[i] = new void*[g.Nodes[1]];
-		p_cnt[i] = new void*[g.Nodes[1]];
+		p[i] = new std::vector<particle>*[g.Nodes[1]];
+		p_cnt[i] = new int*[g.Nodes[1]];
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			p[i][j] = new vector<particle>[g.Nodes[2]];
-			p_cnt[i][j] = new unsigned[g.Nodes[2]];
+			p[i][j] = new std::vector<particle>[g.Nodes[2]];
+			p_cnt[i][j] = new int[g.Nodes[2]];
 		}
 	}
 }
@@ -89,11 +89,11 @@ bool ParticleGrid::cell_valid(unsigned i, unsigned j, unsigned k) {
 	return true;
 }
 
-std::vector<int> ParticleGrid::space_to_grid(std::vector<unsigned> &x) {
+std::vector<int> ParticleGrid::space_to_grid(std::vector<double> &x) {
 	std::vector<int> v(3);
 	for (unsigned i = 0; i < 3; i++) {
-		sh_x = x[i] + g.dims[i];
-		v[i] = static_cast<int> floor(sh_x / g.h[i]);
+		double sh_x = x[i] + g.dims[i];
+		v[i] = static_cast<int> (floor(sh_x / g.h[i]));
 		if (v[i] < 0) v[i] = 0;
 	}
 	return v;

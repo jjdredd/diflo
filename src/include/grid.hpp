@@ -15,7 +15,7 @@ struct SymGrid {
 	bool operator==(SymGrid &);
 };
 
-Grid MinGrid(const SymGrid &, const SymGrid &);
+SymGrid MinGrid(const SymGrid &, const SymGrid &);
 
 
 class ParticleGrid {
@@ -26,16 +26,16 @@ public:
 
 	void Populate(event &);
 	void Clear();
-	void SringToFit();
+	void ShrinkToFit();
 
 private:
 	bool cell_valid(unsigned, unsigned, unsigned);
-	std::vector<int> space_to_grid(std::vector<unsigned> &);
+	std::vector<int> space_to_grid(std::vector<double> &);
 
 	SymGrid g;
-	unsigned min_particles;
+	int min_particles;
 	std::vector<particle> ***p;
-	unsigned char ***p_cnt;
+	int ***p_cnt;
 
 };
 
