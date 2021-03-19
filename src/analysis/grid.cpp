@@ -29,6 +29,16 @@ bool SymGrid::operator==(SymGrid &o) {
 	return true;	
 }
 
+std::vector<int> SymGrid::space_to_grid(std::vector<double> &x) {
+	std::vector<int> v(3);
+	for (unsigned i = 0; i < 3; i++) {
+		double sh_x = x[i] + dims[i];
+		v[i] = static_cast<int> (floor(sh_x / h[i]));
+		if (v[i] < 0) v[i] = 0;
+	}
+	return v;
+}
+
 
 // MinGrid is broken do not use
 SymGrid MinGrid(const SymGrid &g_1, const SymGrid &g_2) {
@@ -89,21 +99,11 @@ bool ParticleGrid::cell_valid(unsigned i, unsigned j, unsigned k) {
 	return true;
 }
 
-std::vector<int> ParticleGrid::space_to_grid(std::vector<double> &x) {
-	std::vector<int> v(3);
-	for (unsigned i = 0; i < 3; i++) {
-		double sh_x = x[i] + g.dims[i];
-		v[i] = static_cast<int> (floor(sh_x / g.h[i]));
-		if (v[i] < 0) v[i] = 0;
-	}
-	return v;
-}
-
 void ParticleGrid::Populate(event &e) {
 	for (unsigned n = 0; n < e.particles.size(); n++) {
 		particle ptcl = e.particles[n];
 		std::vector<double> x{ptcl.x, ptcl.y, ptcl.z};
-		std::vector<int> v = space_to_grid(x);
+		std::vector<int> v = g.space_to_grid(x);
 		p[ v[0] ][ v[1] ][ v[2] ].push_back(ptcl);
 		p_cnt[ v[0] ][ v[1] ][ v[2] ] = p[ v[0] ][ v[1] ][ v[2] ].size();
 	}
@@ -127,4 +127,9 @@ void ParticleGrid::ShrinkToFit() {
 			}
 		}
 	}
+}
+
+void ParticleGrid::WriteOut(std::string &base_path) const {
+	
+
 }

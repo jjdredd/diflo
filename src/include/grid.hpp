@@ -2,6 +2,7 @@
 #define GRID_HPP
 
 #include <vector>
+#include <string>
 
 #include "data.hpp"
 
@@ -13,6 +14,7 @@ struct SymGrid {
 
 	SymGrid(double, unsigned);
 	bool operator==(SymGrid &);
+	std::vector<int> space_to_grid(std::vector<double> &);
 };
 
 SymGrid MinGrid(const SymGrid &, const SymGrid &);
@@ -27,10 +29,10 @@ public:
 	void Populate(event &);
 	void Clear();
 	void ShrinkToFit();
+	void WriteOut(std::string &) const;
 
 private:
 	bool cell_valid(unsigned, unsigned, unsigned);
-	std::vector<int> space_to_grid(std::vector<double> &);
 
 	SymGrid g;
 	int min_particles;
