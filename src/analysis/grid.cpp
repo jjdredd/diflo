@@ -106,6 +106,13 @@ void ParticleGrid::Populate(event &e) {
 		std::vector<int> v = g.space_to_grid(x);
 
 		// XXX TODO check if coordinates are on grid (oob)
+		bool oob_detected = false;
+		for (unsigned i = 0; i < 3; i++) {
+			if(oob_detected = (v[i] < 0 || v[i] >= g.Nodes[i])) {
+				break;
+			}
+		}
+		if (oob_detected) continue;
 
 		p[ v[0] ][ v[1] ][ v[2] ].push_back(ptcl);
 		p_cnt[ v[0] ][ v[1] ][ v[2] ] = p[ v[0] ][ v[1] ][ v[2] ].size();

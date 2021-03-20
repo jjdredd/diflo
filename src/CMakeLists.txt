@@ -5,8 +5,8 @@ project(diflo)
 find_package(Boost 1.36.0 REQUIRED COMPONENTS program_options)
 
 # set CFLAGS etc
-set(WFLAGS "-W -Wall -Wextra -std=c++11")
-set(OPTFLAGS "-march=native -ffast-math -O3 -funroll-loops -g")
+set(WFLAGS "-W -Wall -Wextra -g -std=c++11")
+set(OPTFLAGS "-march=native -ffast-math -O3 -funroll-loops")
 set(CMAKE_CXX_FLAGS  "${WFLAGS} ${OPTFLAGS}")
 
 add_executable(diflo.elf diflo.cpp)
