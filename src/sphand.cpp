@@ -46,15 +46,36 @@ int main(int argc, const char **argv) {
 		return 0;
 	}
 
-	std::cout << cmdvars["dir"].as<std::string>()
-		  << '\t' << cmdvars["out"].as<std::string>() << std::endl;
-
 	std::ifstream s(cmdvars["dir"].as<std::string>() + std::string("input"));
-	DataHSD D(s, false, 2);
+	DataHSDC D(s, false, 2);
 	s.close();
 
-	
-	
+	{
+		s.open(cmdvars["dir"].as<std::string>() + std::string("fort.301"));
+		if(s.is_open()) D.readin_particles(s, true);
+		else std::cout << "Warning: couldn't open mesons file " << std::endl;
+		s.close();
+	}
+
+	{
+		s.open(cmdvars["dir"].as<std::string>() + std::string("fort.300"));
+		if(s.is_open()) D.readin_particles(s, true);
+		else std::cout << "Warning: couldn't open mesons file " << std::endl;
+		s.close();
+	}
+
+	SymGrid g(12, 30);
+	ParticleGrid pg(g, 4);
+
+	for(unsigned isub = 0; isub < D.ISUBS; isub++){
+		for(unsigned irun = 0; irun < D.NUM; irun++){
+			pg.Populate(D.P[isub][irun]);
+		}
+	}
+
+	pg.ShrinkToFit();
+	pg.WriteParticleCount(std::string(cmdvars["out"].as<std::string>())
+			      + std::string("pcnt_"));
 
 	return 0;
 }

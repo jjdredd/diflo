@@ -126,8 +126,8 @@ DataHSD::~DataHSD(){
 bool DataHSD::parse_input_line(char *str, int *isub, int *irun, particle *p){
 
 	return (sscanf(str, "\t%i\t%i\t%i\t%i\t%lf\t%lf\t%lf\t%lf"
-			       "\t%lf\n", &p->type, &p->charge, isub, irun,
-			       &p->Px, &p->Py, &p->Pz, &p->P0, &p->b) == 9);
+		       "\t%lf\n", &p->type, &p->charge, isub, irun,
+		       &p->Px, &p->Py, &p->Pz, &p->P0, &p->b) == 9);
 }
 
 void DataHSD::readin_particles(std::ifstream &s, bool mesons){

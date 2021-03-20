@@ -66,7 +66,7 @@ ParticleGrid::ParticleGrid(SymGrid &g, unsigned mp) : g(g), min_particles(mp) {
 		p_cnt[i] = new int*[g.Nodes[1]];
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			p[i][j] = new std::vector<particle>[g.Nodes[2]];
-			p_cnt[i][j] = new int[g.Nodes[2]];
+			p_cnt[i][j] = new int[g.Nodes[2]]();
 		}
 	}
 }
@@ -104,15 +104,18 @@ void ParticleGrid::Populate(event &e) {
 		particle ptcl = e.particles[n];
 		std::vector<double> x{ptcl.x, ptcl.y, ptcl.z};
 		std::vector<int> v = g.space_to_grid(x);
+
+		// XXX TODO check if coordinates are on grid (oob)
+
 		p[ v[0] ][ v[1] ][ v[2] ].push_back(ptcl);
 		p_cnt[ v[0] ][ v[1] ][ v[2] ] = p[ v[0] ][ v[1] ][ v[2] ].size();
 	}
 }
 
 void ParticleGrid::Clear() {
-	for (unsigned i = 0; i < g.dims[0]; i++) {
-		for (unsigned j = 0; j < g.dims[1]; j++) {
-			for (unsigned k = 0; k < g.dims[2]; k++) {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
 				p[i][j][k].clear();
 			}
 		}
@@ -120,16 +123,28 @@ void ParticleGrid::Clear() {
 }
 
 void ParticleGrid::ShrinkToFit() {
-	for (unsigned i = 0; i < g.dims[0]; i++) {
-		for (unsigned j = 0; j < g.dims[1]; j++) {
-			for (unsigned k = 0; k < g.dims[2]; k++) {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
 				p[i][j][k].shrink_to_fit();
 			}
 		}
 	}
 }
 
-void ParticleGrid::WriteOut(std::string &base_path) const {
-	
-
+void ParticleGrid::WriteParticleCount(const std::string &base_path) const {
+	for (unsigned j = 0; j < g.Nodes[1]; j++) {
+		std::ofstream out_file;
+		std::string file_path;
+		file_path = base_path + std::to_string(j)
+			+ std::string(".txt");
+		out_file.open(file_path, std::ofstream::out);
+		for (unsigned k = 0; k < g.Nodes[2]; k++) {
+			for (unsigned i = 0; i < g.Nodes[0]; i++) {
+				out_file << p_cnt[i][j][k] << '\t';
+			}
+			out_file << std::endl;
+		}
+		out_file.close();
+	}
 }

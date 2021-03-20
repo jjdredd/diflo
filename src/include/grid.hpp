@@ -29,7 +29,7 @@ public:
 	void Populate(event &);
 	void Clear();
 	void ShrinkToFit();
-	void WriteOut(std::string &) const;
+	void WriteParticleCount(const std::string &) const;
 
 private:
 	bool cell_valid(unsigned, unsigned, unsigned);
