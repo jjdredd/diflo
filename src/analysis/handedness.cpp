@@ -136,3 +136,77 @@ double MaxHandedRatio(event& e, double& angle) {
 	}
 	return prev_ratio;
 }
+
+
+
+//
+// Handedness on a spacial grid
+// 
+
+HandednessGrid::HandednessGrid(const SymGrid &g) :g(g) {
+	hand = new double**[g.Nodes[0]];
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		hand[i] = new double*[g.Nodes[1]];
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			hand[i][j] = new double[g.Nodes[2]]();
+		}
+	}
+}
+
+HandednessGrid::~HandednessGrid() {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			delete[] hand[i][j];
+		}
+		delete[] hand[i];
+	}
+	delete[] hand;
+}
+
+void HandednessGrid::WriteOutHandedness(const std::string &base_path) const {
+	for (unsigned j = 0; j < g.Nodes[1]; j++) {
+		std::ofstream out_file;
+		std::string file_path;
+		file_path = base_path + std::to_string(j)
+			+ std::string(".txt");
+		out_file.open(file_path, std::ofstream::out);
+		for (unsigned k = 0; k < g.Nodes[2]; k++) {
+			for (unsigned i = 0; i < g.Nodes[0]; i++) {
+				out_file << hand[i][j][k] << '\t';
+			}
+			out_file << std::endl;
+		}
+		out_file.close();
+	}
+}
+
+double HandednessGrid::compute_cell_hand(const std::vector<particle> &p) const {
+	double eta = 0, abseta = 0;
+	std::vector<particle> ptcls(p.size());
+
+	std::copy(p.begin(), p.end(), ptcls.begin());
+	std::sort(ptcls.begin(), ptcls.end(), pcompare);
+	unsigned size = ptcls.size();
+
+	for (unsigned i = 0; i < size; i++){
+		for(unsigned j = i + 1; j < size; j++){
+			for(unsigned k = j + 1; k < size; k++){
+				double mxpr = mixprod(p[k], p[j], p[i]);
+				eta += mxpr;
+				abseta += fabs(mxpr);
+			}
+		}
+	}
+	return eta / abseta;
+}
+
+void HandednessGrid::Compute(const ParticleGrid &pg) {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+				if(!pg.IsCellValid(i, j, k)) continue;
+				hand[i][j][k] = compute_cell_hand(pg(i, j, k));
+			}
+		}
+	}
+}

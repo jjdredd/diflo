@@ -26,13 +26,14 @@ public:
 	ParticleGrid(SymGrid &, unsigned);
 	virtual ~ParticleGrid();
 
-	void Populate(event &);
+	int Populate(event &);
 	void Clear();
 	void ShrinkToFit();
 	void WriteParticleCount(const std::string &) const;
+	bool IsCellValid(unsigned, unsigned, unsigned) const;
+	std::vector<particle> & operator() (unsigned, unsigned, unsigned) const;
 
 private:
-	bool cell_valid(unsigned, unsigned, unsigned);
 
 	SymGrid g;
 	int min_particles;
@@ -40,6 +41,8 @@ private:
 	int ***p_cnt;
 
 };
+
+// implement grid accumulator class
 
 
 #endif	// GRID_HPP

@@ -2,6 +2,7 @@
 #define HANDED_HPP
 
 #include "data.hpp"
+#include "grid.hpp"
 #include <cmath>
 #include <cstring>
 #include <vector>
@@ -45,5 +46,28 @@ private:
 };
 
 double MaxHandedRatio(event&, double&);
+
+
+//
+// Handedness on a spacial grid
+// 
+
+class HandednessGrid {
+
+public:
+	HandednessGrid(const SymGrid &);
+	virtual ~HandednessGrid();
+	void Compute(const ParticleGrid &);
+	void WriteOutHandedness(const std::string &) const;
+
+private:
+	double compute_cell_hand(const std::vector<particle> &) const;
+
+	SymGrid g;
+	double ***hand;
+
+};
+
+
 
 #endif	// HANDED_HPP

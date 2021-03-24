@@ -4,6 +4,7 @@
 
 #include "data.hpp"
 #include "grid.hpp"
+#include "handedness.hpp"
 
 namespace po = boost::program_options;
 
@@ -64,7 +65,7 @@ int main(int argc, const char **argv) {
 		s.close();
 	}
 
-	SymGrid g(12, 30);
+	SymGrid g(12, 50);
 	ParticleGrid pg(g, 4);
 
 	for(unsigned isub = 0; isub < D.ISUBS; isub++){
@@ -73,9 +74,19 @@ int main(int argc, const char **argv) {
 		}
 	}
 
+	// for(unsigned isub = 0; isub < D.ISUBS; isub++){
+	// 	pg.Populate(D.P[isub][0]);
+	// }
+
 	pg.ShrinkToFit();
+
 	pg.WriteParticleCount(std::string(cmdvars["out"].as<std::string>())
 			      + std::string("pcnt_"));
+
+	HandednessGrid HG(g);
+	HG.Compute(pg);
+	HG.WriteOutHandedness(std::string(cmdvars["out"].as<std::string>())
+			      + std::string("handgrid_"));
 
 	return 0;
 }

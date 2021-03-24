@@ -84,7 +84,7 @@ ParticleGrid::~ParticleGrid() {
 	delete[] p_cnt;
 }
 
-bool ParticleGrid::cell_valid(unsigned i, unsigned j, unsigned k) {
+bool ParticleGrid::IsCellValid(unsigned i, unsigned j, unsigned k) const {
 
 	if (p_cnt[i][j][k] < min_particles) return false;
 	for (unsigned n = i; n <= i + 1; n += 2) {
@@ -99,7 +99,8 @@ bool ParticleGrid::cell_valid(unsigned i, unsigned j, unsigned k) {
 	return true;
 }
 
-void ParticleGrid::Populate(event &e) {
+int ParticleGrid::Populate(event &e) {
+	int oob_count = 0;
 	for (unsigned n = 0; n < e.particles.size(); n++) {
 		particle ptcl = e.particles[n];
 		std::vector<double> x{ptcl.x, ptcl.y, ptcl.z};
@@ -108,15 +109,19 @@ void ParticleGrid::Populate(event &e) {
 		// XXX TODO check if coordinates are on grid (oob)
 		bool oob_detected = false;
 		for (unsigned i = 0; i < 3; i++) {
-			if(oob_detected = (v[i] < 0 || v[i] >= g.Nodes[i])) {
+			if( (oob_detected = (v[i] < 0 || v[i] >= g.Nodes[i])) ) {
 				break;
 			}
 		}
-		if (oob_detected) continue;
+		if (oob_detected) {
+			oob_count++;
+			continue;
+		}
 
 		p[ v[0] ][ v[1] ][ v[2] ].push_back(ptcl);
 		p_cnt[ v[0] ][ v[1] ][ v[2] ] = p[ v[0] ][ v[1] ][ v[2] ].size();
 	}
+	return oob_count;
 }
 
 void ParticleGrid::Clear() {
@@ -124,6 +129,7 @@ void ParticleGrid::Clear() {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
 				p[i][j][k].clear();
+				p_cnt[i][j][k] = 0;
 			}
 		}
 	}
@@ -154,4 +160,9 @@ void ParticleGrid::WriteParticleCount(const std::string &base_path) const {
 		}
 		out_file.close();
 	}
+}
+
+
+std::vector<particle> & ParticleGrid::operator() (unsigned i, unsigned j, unsigned k) const {
+	return p[i][j][k];
 }
