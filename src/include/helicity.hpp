@@ -5,21 +5,21 @@
 #include "grid.hpp"
 
 
-// make single-responsibility classes!
 class Helicity {
 
 public:
-	Helicity();
+	explicit Helicity(const SymGrid &);
 	virtual ~Helicity();
-	void Compute(const event &);
+	void Compute(const ParticleGrid &);
 
 private:
-	void check_bounds(const event &);
-	void helicity(const event &);
-	void handedness(const event &);
+	void velocity(const ParticleGrid &);
+	void helicity();
+	std::vector<double> cell_velocity(const std::vector<particle> &) const;
 
 	double ***helicity;
-	Grid g;
+	double ***velocity;
+	SymGrid g;
 	
 };
 
