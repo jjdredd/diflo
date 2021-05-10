@@ -166,3 +166,47 @@ void ParticleGrid::WriteParticleCount(const std::string &base_path) const {
 std::vector<particle> & ParticleGrid::operator() (unsigned i, unsigned j, unsigned k) const {
 	return p[i][j][k];
 }
+
+
+
+//
+// class ArrayGrid
+//
+
+ArrayGrid::ArrayGrid(SymGrid &g, unsigned size) : g(g), capacity(size) {
+	garray = new double***[g.Nodes[0]];
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		garray[i] = new double**[g.Nodes[1]];
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			garray[i][j] = new double*[g.Nodes[2]];
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+				garray[i][j][k] = new double[capacity];
+			}
+		}
+	}
+}
+
+
+ArrayGrid::~ArrayGrid() {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+				delete[] garray[i][j][k];
+			}
+			delete[] garray[i][j];
+		}
+		delete[] garray[i];
+	}
+	delete[] garray;
+}
+
+double & ArrayGrid::operator() (unsigned i, unsigned j, unsigned k, unsigned n) {
+	if (n >= capacity) {
+		std::cerr << "OOB in ArrayGrid::operator()" << std::endl;
+	}
+	return &(garray[i][j][k][n]);
+}
+
+unsigned ArrayGrid::GetCapacity() {
+	return capacity;
+}

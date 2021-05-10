@@ -16,11 +16,11 @@ private:
 	void velocity(const ParticleGrid &);
 	void helicity();
 	std::vector<double> cell_velocity(const std::vector<particle> &) const;
+	double cell_helicity(unsigned, unsigned, unsigned) const;
 
 	double ***helicity;
-	double ***velocity;
+	ArrayGrid velocity;
 	SymGrid g;
-	
 };
 
 

@@ -44,5 +44,19 @@ private:
 
 // implement grid accumulator class
 
+class ArrayGrid {
+
+public:
+	explicit ArrayGrid(SymGrid &, unsigned);
+	~ArrayGrid();
+	double & operator() (unsigned, unsigned, unsigned, unsigned);
+	unsigned GetCapacity() const;
+
+private:
+	SymGrid g;
+	int capacty;
+	double ****garray;
+}
+
 
 #endif	// GRID_HPP
