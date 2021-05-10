@@ -173,7 +173,7 @@ std::vector<particle> & ParticleGrid::operator() (unsigned i, unsigned j, unsign
 // class ArrayGrid
 //
 
-ArrayGrid::ArrayGrid(SymGrid &g, unsigned size) : g(g), capacity(size) {
+ArrayGrid::ArrayGrid(const SymGrid &g, unsigned size) : g(g), capacity(size) {
 	garray = new double***[g.Nodes[0]];
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		garray[i] = new double**[g.Nodes[1]];
@@ -204,9 +204,9 @@ double & ArrayGrid::operator() (unsigned i, unsigned j, unsigned k, unsigned n) 
 	if (n >= capacity) {
 		std::cerr << "OOB in ArrayGrid::operator()" << std::endl;
 	}
-	return &(garray[i][j][k][n]);
+	return garray[i][j][k][n];
 }
 
-unsigned ArrayGrid::GetCapacity() {
+unsigned ArrayGrid::GetCapacity() const {
 	return capacity;
 }

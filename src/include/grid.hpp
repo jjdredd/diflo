@@ -47,16 +47,16 @@ private:
 class ArrayGrid {
 
 public:
-	explicit ArrayGrid(SymGrid &, unsigned);
+	explicit ArrayGrid(const SymGrid &, unsigned);
 	~ArrayGrid();
 	double & operator() (unsigned, unsigned, unsigned, unsigned);
 	unsigned GetCapacity() const;
 
 private:
 	SymGrid g;
-	int capacty;
+	int capacity;
 	double ****garray;
-}
+};
 
 
 #endif	// GRID_HPP

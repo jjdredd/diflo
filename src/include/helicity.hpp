@@ -8,18 +8,19 @@
 class Helicity {
 
 public:
-	explicit Helicity(const SymGrid &);
+	explicit Helicity(const SymGrid &, unsigned);
 	virtual ~Helicity();
 	void Compute(const ParticleGrid &);
 
 private:
-	void velocity(const ParticleGrid &);
-	void helicity();
+	void ComputeVelocity(const ParticleGrid &);
+	void ComputeHelicity();
 	std::vector<double> cell_velocity(const std::vector<particle> &) const;
-	double cell_helicity(unsigned, unsigned, unsigned) const;
+	std::vector<double> cell_rot(unsigned, unsigned, unsigned);
+	double cell_helicity(unsigned, unsigned, unsigned);
 
 	double ***helicity;
-	ArrayGrid velocity;
+	ArrayGrid v;
 	SymGrid g;
 };
 

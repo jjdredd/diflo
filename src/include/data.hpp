@@ -64,9 +64,9 @@ struct event {
 //
 
 enum DataVersion {
-	HSD_VER_ORIG,
-	HSD_VER_COORD,
-	HSD_VER_PHSD,
+		  HSD_VER_ORIG,
+		  HSD_VER_COORD,
+		  HSD_VER_PHSD,
 };
 
 class DataHSD {
@@ -85,7 +85,7 @@ private:
 	int type, charge;
 	bool pick;
 	virtual bool parse_input_line(char *str, int *isub, int *irun,
-				       particle *p);
+				      particle *p);
 };
 
 class DataHSDC : public DataHSD {		// with coordiantes

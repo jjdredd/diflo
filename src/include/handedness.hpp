@@ -24,7 +24,7 @@ public:
 	Handedness();
 	virtual ~Handedness();
 	void EventEta(event &, std::vector<double> &,
-			      std::vector<unsigned> &);
+		      std::vector<unsigned> &);
 
 private:
 	virtual unsigned sub_volume(particle &); // octants
