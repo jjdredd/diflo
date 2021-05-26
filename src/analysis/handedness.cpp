@@ -210,3 +210,25 @@ void HandednessGrid::Compute(const ParticleGrid &pg) {
 		}
 	}
 }
+
+
+void HandednessGrid::CopyArray(ArrayGrid &out, unsigned n) const {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+				out(i, j, k, n) = hand[i][j][k];
+			}
+		}
+	}
+}
+
+
+void HandednessGrid::Clear() {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+				hand[i][j][k] = 0;
+			}
+		}
+	}
+}

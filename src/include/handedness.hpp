@@ -59,6 +59,8 @@ public:
 	virtual ~HandednessGrid();
 	void Compute(const ParticleGrid &);
 	void WriteOutHandedness(const std::string &) const;
+	void Clear();
+	bool CopyArray(ArrayGrid &, unsigned) const;
 
 private:
 	double compute_cell_hand(const std::vector<particle> &) const;

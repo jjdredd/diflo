@@ -94,3 +94,28 @@ void Helicity::ComputeHelicity() {
 		}
 	}
 }
+
+
+void Helicity::CopyArray(ArrayGrid &out, unsigned n) const {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+				out(i, j, k, n) = helicity[i][j][k];
+			}
+		}
+	}
+}
+
+
+void Helicity::Clear() {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+				helicity[i][j][k] = 0;
+				for (unsigned k = 0; k < 3; k++) {
+					v(i, j, k, n) = 0;
+				}
+			}
+		}
+	}
+}

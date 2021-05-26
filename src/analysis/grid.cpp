@@ -55,34 +55,46 @@ SymGrid MinGrid(const SymGrid &g_1, const SymGrid &g_2) {
 
 
 //
+// ScalarGrid
+//
+
+template <typename T>
+ScalarGrid::ScalarGrid(const SymGrid &g)
+	: g(g) {
+	elem = new T**[g.Nodes[0]];
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		elem[i] = new T*[g.Nodes[1]];
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			elem[i][j] = new T[g.Nodes[2]];
+		}
+	}
+}
+
+template <typename T>
+ScalarGrid::~ScalarGrid() {
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			delete[] elem[i][j];
+		}
+		delete[] elem[i];
+	}
+	delete[] elem;
+}
+
+template<> struct ScalarGrid<int>;
+template<> struct ScalarGrid<double>;
+template<> struct ScalarGrid< std::vector<particle> >;
+
+
+//
 // class ParticleGrid
 // 
 
-ParticleGrid::ParticleGrid(SymGrid &g, unsigned mp) : g(g), min_particles(mp) {
-	p = new std::vector<particle>**[g.Nodes[0]];
-	p_cnt = new int**[g.Nodes[0]];
-	for (unsigned i = 0; i < g.Nodes[0]; i++) {
-		p[i] = new std::vector<particle>*[g.Nodes[1]];
-		p_cnt[i] = new int*[g.Nodes[1]];
-		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			p[i][j] = new std::vector<particle>[g.Nodes[2]];
-			p_cnt[i][j] = new int[g.Nodes[2]]();
-		}
-	}
+ParticleGrid::ParticleGrid(SymGrid &g, unsigned mp)
+	: g(g), min_particles(mp), p(g), p_cnt(g) {
 }
 
-ParticleGrid::~ParticleGrid() {
-	for (unsigned i = 0; i < g.Nodes[0]; i++) {
-		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			delete[] p[i][j];
-			delete[] p_cnt[i][j];
-		}
-		delete[] p[i];
-		delete[] p_cnt[i];
-	}
-	delete[] p;
-	delete[] p_cnt;
-}
+ParticleGrid::~ParticleGrid() {}
 
 bool ParticleGrid::IsCellValid(unsigned i, unsigned j, unsigned k) const {
 

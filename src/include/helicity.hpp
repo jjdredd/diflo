@@ -11,6 +11,8 @@ public:
 	explicit Helicity(const SymGrid &, unsigned);
 	virtual ~Helicity();
 	void Compute(const ParticleGrid &);
+	void Clear();
+	bool CopyArray(ArrayGrid &, unsigned) const;
 
 private:
 	void ComputeVelocity(const ParticleGrid &);

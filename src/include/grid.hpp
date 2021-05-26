@@ -19,6 +19,13 @@ struct SymGrid {
 
 SymGrid MinGrid(const SymGrid &, const SymGrid &);
 
+template <typename T>
+struct ScalarGrid {
+	ScalarGrid(const SymGrid &);
+	~ScalarGrid();
+	SymGrid g;
+	T ***elem;
+};
 
 class ParticleGrid {
 
@@ -37,8 +44,8 @@ private:
 
 	SymGrid g;
 	int min_particles;
-	std::vector<particle> ***p;
-	int ***p_cnt;
+	ScalarGrid< std::vector<particle> > p;
+	ScalarGrid<int> p_cnt;
 
 };
 
@@ -55,7 +62,7 @@ public:
 private:
 	SymGrid g;
 	int capacity;
-	double ****garray;
+	ScalarGrid<double> garray;
 };
 
 
