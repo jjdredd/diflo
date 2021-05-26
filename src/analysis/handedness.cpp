@@ -197,6 +197,7 @@ void HandednessGrid::Compute(const ParticleGrid &pg) {
 
 
 bool HandednessGrid::CopyArray(ArrayGrid &out, unsigned n) const {
+	if (n >= out.GetCapacity()) return false;
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
@@ -204,6 +205,7 @@ bool HandednessGrid::CopyArray(ArrayGrid &out, unsigned n) const {
 			}
 		}
 	}
+	return true;
 }
 
 

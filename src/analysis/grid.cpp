@@ -65,7 +65,7 @@ ScalarGrid<T>::ScalarGrid(const SymGrid &g)
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		elem[i] = new T*[g.Nodes[1]];
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			elem[i][j] = new T[g.Nodes[2]];
+			elem[i][j] = new T[g.Nodes[2]]();
 		}
 	}
 }

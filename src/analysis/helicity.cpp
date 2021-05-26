@@ -8,8 +8,8 @@
 // class Helicity
 //
 
-Helicity::Helicity(const SymGrid &g, unsigned N)
-	: helicity(g), v(g, N), g(g) {
+Helicity::Helicity(const SymGrid &g)
+	: helicity(g), v(g, 3), g(g) {
 
 }
 
@@ -27,7 +27,11 @@ std::vector<double> Helicity::cell_velocity(const std::vector<particle> &pv) con
 		vcell[2] += p.Pz;
 		e += p.P0;
 	}
-	for (unsigned i = 0; i < 3; i++) vcell[i] /= e;
+	if (pv.size() > 0) {
+		for (unsigned i = 0; i < 3; i++) vcell[i] /= e;
+	} else {
+		for (unsigned i = 0; i < 3; i++) vcell[i] = 0;
+	}
 
 	return vcell;
 }
@@ -71,17 +75,22 @@ double Helicity::cell_helicity(unsigned i, unsigned j, unsigned k) {
 }
 
 void Helicity::ComputeHelicity() {
-	for (unsigned i = 0; i < g.Nodes[0]; i++) {
-		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+	for (unsigned i = 1; i < g.Nodes[0]; i++) {
+		for (unsigned j = 1; j < g.Nodes[1]; j++) {
+			for (unsigned k = 1; k < g.Nodes[2]; k++) {
 				helicity.elem[i][j][k] = cell_helicity(i, j, k);
 			}
 		}
 	}
 }
 
+void Helicity::Compute(const ParticleGrid &pg) {
+	ComputeVelocity(pg);
+	ComputeHelicity();
+}
 
 bool Helicity::CopyArray(ArrayGrid &out, unsigned n) const {
+	if (n >= out.GetCapacity()) return false;
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
@@ -89,6 +98,7 @@ bool Helicity::CopyArray(ArrayGrid &out, unsigned n) const {
 			}
 		}
 	}
+	return true;
 }
 
 
@@ -102,5 +112,22 @@ void Helicity::Clear() {
 				}
 			}
 		}
+	}
+}
+
+void Helicity::WriteOutHelicity(const std::string &base_path) const {
+	for (unsigned j = 0; j < g.Nodes[1]; j++) {
+		std::ofstream out_file;
+		std::string file_path;
+		file_path = base_path + std::to_string(j)
+			+ std::string(".txt");
+		out_file.open(file_path, std::ofstream::out);
+		for (unsigned k = 0; k < g.Nodes[2]; k++) {
+			for (unsigned i = 0; i < g.Nodes[0]; i++) {
+				out_file << helicity.elem[i][j][k] << '\t';
+			}
+			out_file << std::endl;
+		}
+		out_file.close();
 	}
 }

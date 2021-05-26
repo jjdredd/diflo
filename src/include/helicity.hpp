@@ -8,11 +8,12 @@
 class Helicity {
 
 public:
-	explicit Helicity(const SymGrid &, unsigned);
+	explicit Helicity(const SymGrid &);
 	virtual ~Helicity();
 	void Compute(const ParticleGrid &);
 	void Clear();
 	bool CopyArray(ArrayGrid &, unsigned) const;
+	void WriteOutHelicity(const std::string &) const;
 
 private:
 	void ComputeVelocity(const ParticleGrid &);

@@ -5,6 +5,7 @@
 #include "data.hpp"
 #include "grid.hpp"
 #include "handedness.hpp"
+#include "helicity.hpp"
 
 namespace po = boost::program_options;
 
@@ -87,6 +88,11 @@ int main(int argc, const char **argv) {
 	HG.Compute(pg);
 	HG.WriteOutHandedness(std::string(cmdvars["out"].as<std::string>())
 			      + std::string("handgrid_"));
+
+	Helicity Hel(g);
+	Hel.Compute(pg);
+	Hel.WriteOutHelicity(std::string(cmdvars["out"].as<std::string>())
+			      + std::string("helgrid_"));
 
 	return 0;
 }
