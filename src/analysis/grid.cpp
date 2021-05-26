@@ -59,7 +59,7 @@ SymGrid MinGrid(const SymGrid &g_1, const SymGrid &g_2) {
 //
 
 template <typename T>
-ScalarGrid::ScalarGrid(const SymGrid &g)
+ScalarGrid<T>::ScalarGrid(const SymGrid &g)
 	: g(g) {
 	elem = new T**[g.Nodes[0]];
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
@@ -71,7 +71,7 @@ ScalarGrid::ScalarGrid(const SymGrid &g)
 }
 
 template <typename T>
-ScalarGrid::~ScalarGrid() {
+ScalarGrid<T>::~ScalarGrid() {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			delete[] elem[i][j];
@@ -81,9 +81,7 @@ ScalarGrid::~ScalarGrid() {
 	delete[] elem;
 }
 
-template<> struct ScalarGrid<int>;
-template<> struct ScalarGrid<double>;
-template<> struct ScalarGrid< std::vector<particle> >;
+template struct ScalarGrid<double>;
 
 
 //
@@ -98,15 +96,15 @@ ParticleGrid::~ParticleGrid() {}
 
 bool ParticleGrid::IsCellValid(unsigned i, unsigned j, unsigned k) const {
 
-	if (p_cnt[i][j][k] < min_particles) return false;
+	if (p_cnt.elem[i][j][k] < min_particles) return false;
 	for (unsigned n = i; n <= i + 1; n += 2) {
-		if (p_cnt[n][j][k] < min_particles) return false;
+		if (p_cnt.elem[n][j][k] < min_particles) return false;
 	}
 	for (unsigned n = j; n <= j + 1; n += 2) {
-		if (p_cnt[i][n][k] < min_particles) return false;
+		if (p_cnt.elem[i][n][k] < min_particles) return false;
 	}
 	for (unsigned n = k; n <= k + 1; n += 2) {
-		if (p_cnt[i][j][n] < min_particles) return false;
+		if (p_cnt.elem[i][j][n] < min_particles) return false;
 	}
 	return true;
 }
@@ -130,8 +128,8 @@ int ParticleGrid::Populate(event &e) {
 			continue;
 		}
 
-		p[ v[0] ][ v[1] ][ v[2] ].push_back(ptcl);
-		p_cnt[ v[0] ][ v[1] ][ v[2] ] = p[ v[0] ][ v[1] ][ v[2] ].size();
+		p.elem[ v[0] ][ v[1] ][ v[2] ].push_back(ptcl);
+		p_cnt.elem[ v[0] ][ v[1] ][ v[2] ] = p.elem[ v[0] ][ v[1] ][ v[2] ].size();
 	}
 	return oob_count;
 }
@@ -140,8 +138,8 @@ void ParticleGrid::Clear() {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
-				p[i][j][k].clear();
-				p_cnt[i][j][k] = 0;
+				p.elem[i][j][k].clear();
+				p_cnt.elem[i][j][k] = 0;
 			}
 		}
 	}
@@ -151,7 +149,7 @@ void ParticleGrid::ShrinkToFit() {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
-				p[i][j][k].shrink_to_fit();
+				p.elem[i][j][k].shrink_to_fit();
 			}
 		}
 	}
@@ -166,7 +164,7 @@ void ParticleGrid::WriteParticleCount(const std::string &base_path) const {
 		out_file.open(file_path, std::ofstream::out);
 		for (unsigned k = 0; k < g.Nodes[2]; k++) {
 			for (unsigned i = 0; i < g.Nodes[0]; i++) {
-				out_file << p_cnt[i][j][k] << '\t';
+				out_file << p_cnt.elem[i][j][k] << '\t';
 			}
 			out_file << std::endl;
 		}
@@ -176,7 +174,7 @@ void ParticleGrid::WriteParticleCount(const std::string &base_path) const {
 
 
 std::vector<particle> & ParticleGrid::operator() (unsigned i, unsigned j, unsigned k) const {
-	return p[i][j][k];
+	return p.elem[i][j][k];
 }
 
 

@@ -62,7 +62,7 @@ public:
 private:
 	SymGrid g;
 	int capacity;
-	ScalarGrid<double> garray;
+	double ****garray;
 };
 
 

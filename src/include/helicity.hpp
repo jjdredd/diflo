@@ -21,8 +21,8 @@ private:
 	std::vector<double> cell_rot(unsigned, unsigned, unsigned);
 	double cell_helicity(unsigned, unsigned, unsigned);
 
-	double ***helicity;
-	ArrayGrid v;
+	ScalarGrid<double> helicity;
+	ArrayGrid v;		// velocity
 	SymGrid g;
 };
 

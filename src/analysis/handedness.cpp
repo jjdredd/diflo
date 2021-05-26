@@ -143,25 +143,9 @@ double MaxHandedRatio(event& e, double& angle) {
 // Handedness on a spacial grid
 // 
 
-HandednessGrid::HandednessGrid(const SymGrid &g) :g(g) {
-	hand = new double**[g.Nodes[0]];
-	for (unsigned i = 0; i < g.Nodes[0]; i++) {
-		hand[i] = new double*[g.Nodes[1]];
-		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			hand[i][j] = new double[g.Nodes[2]]();
-		}
-	}
-}
+HandednessGrid::HandednessGrid(const SymGrid &g) : g(g), hand(g) {}
 
-HandednessGrid::~HandednessGrid() {
-	for (unsigned i = 0; i < g.Nodes[0]; i++) {
-		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			delete[] hand[i][j];
-		}
-		delete[] hand[i];
-	}
-	delete[] hand;
-}
+HandednessGrid::~HandednessGrid() {}
 
 void HandednessGrid::WriteOutHandedness(const std::string &base_path) const {
 	for (unsigned j = 0; j < g.Nodes[1]; j++) {
@@ -172,7 +156,7 @@ void HandednessGrid::WriteOutHandedness(const std::string &base_path) const {
 		out_file.open(file_path, std::ofstream::out);
 		for (unsigned k = 0; k < g.Nodes[2]; k++) {
 			for (unsigned i = 0; i < g.Nodes[0]; i++) {
-				out_file << hand[i][j][k] << '\t';
+				out_file << hand.elem[i][j][k] << '\t';
 			}
 			out_file << std::endl;
 		}
@@ -205,18 +189,18 @@ void HandednessGrid::Compute(const ParticleGrid &pg) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
 				if(!pg.IsCellValid(i, j, k)) continue;
-				hand[i][j][k] = compute_cell_hand(pg(i, j, k));
+				hand.elem[i][j][k] = compute_cell_hand(pg(i, j, k));
 			}
 		}
 	}
 }
 
 
-void HandednessGrid::CopyArray(ArrayGrid &out, unsigned n) const {
+bool HandednessGrid::CopyArray(ArrayGrid &out, unsigned n) const {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
-				out(i, j, k, n) = hand[i][j][k];
+				out(i, j, k, n) = hand.elem[i][j][k];
 			}
 		}
 	}
@@ -227,7 +211,7 @@ void HandednessGrid::Clear() {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
-				hand[i][j][k] = 0;
+				hand.elem[i][j][k] = 0;
 			}
 		}
 	}

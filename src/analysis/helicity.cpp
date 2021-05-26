@@ -9,42 +9,27 @@
 //
 
 Helicity::Helicity(const SymGrid &g, unsigned N)
-	: v(g, N), g(g) {
+	: helicity(g), v(g, N), g(g) {
 
-	helicity = new double**[g.Nodes[0]];
-	for (unsigned i = 0; i < g.Nodes[0]; i++) {
-		helicity[i] = new double*[g.Nodes[1]];
-		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			helicity[i][j] = new double[g.Nodes[2]]();
-		}
-	}
 }
 
 
-Helicity::~Helicity() {
-	for (unsigned i = 0; i < g.Nodes[0]; i++) {
-		for (unsigned j = 0; j < g.Nodes[1]; j++) {
-			delete[] helicity[i][j];
-		}
-		delete[] helicity[i];
-	}
-	delete[] helicity;
-}
+Helicity::~Helicity() {}
 
 
 std::vector<double> Helicity::cell_velocity(const std::vector<particle> &pv) const {
 	double e = 0;
-	std::vector<double> v(3, 0.0);
+	std::vector<double> vcell(3, 0.0);
 
 	for (const particle &p : pv) {
-		v[0] += p.Px;
-		v[1] += p.Py;
-		v[2] += p.Pz;
+		vcell[0] += p.Px;
+		vcell[1] += p.Py;
+		vcell[2] += p.Pz;
 		e += p.P0;
 	}
-	for (unsigned i = 0; i < 3; i++) v[i] /= e;
+	for (unsigned i = 0; i < 3; i++) vcell[i] /= e;
 
-	return v;
+	return vcell;
 }
 
 
@@ -89,18 +74,18 @@ void Helicity::ComputeHelicity() {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
-				helicity[i][j][k] = cell_helicity(i, j, k);
+				helicity.elem[i][j][k] = cell_helicity(i, j, k);
 			}
 		}
 	}
 }
 
 
-void Helicity::CopyArray(ArrayGrid &out, unsigned n) const {
+bool Helicity::CopyArray(ArrayGrid &out, unsigned n) const {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
-				out(i, j, k, n) = helicity[i][j][k];
+				out(i, j, k, n) = helicity.elem[i][j][k];
 			}
 		}
 	}
@@ -111,8 +96,8 @@ void Helicity::Clear() {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
-				helicity[i][j][k] = 0;
-				for (unsigned k = 0; k < 3; k++) {
+				helicity.elem[i][j][k] = 0;
+				for (unsigned n = 0; n < 3; n++) {
 					v(i, j, k, n) = 0;
 				}
 			}

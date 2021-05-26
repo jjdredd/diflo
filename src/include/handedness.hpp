@@ -66,7 +66,7 @@ private:
 	double compute_cell_hand(const std::vector<particle> &) const;
 
 	SymGrid g;
-	double ***hand;
+	ScalarGrid<double> hand;
 
 };
 
