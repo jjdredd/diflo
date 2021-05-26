@@ -41,7 +41,10 @@ void Helicity::ComputeVelocity(const ParticleGrid &pg) {
 	for (unsigned i = 0; i < g.Nodes[0]; i++) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
-				std::vector<double> vcell = cell_velocity(pg(i, j, k));
+				std::vector<double> vcell(3, 0.0);
+				if (pg.IsCellValid(i, j, k)) {
+					vcell = cell_velocity(pg(i, j, k));
+				}
 				for (unsigned n = 0; n < 3; n++) {
 					v(i, j, k, n) = vcell[n];
 				}
