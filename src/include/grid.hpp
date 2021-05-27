@@ -23,6 +23,7 @@ template <typename T>
 struct ScalarGrid {
 	ScalarGrid(const SymGrid &);
 	~ScalarGrid();
+	SymGrid GetGrid() const;
 	SymGrid g;
 	T ***elem;
 };
@@ -39,6 +40,7 @@ public:
 	void WriteParticleCount(const std::string &) const;
 	bool IsCellValid(unsigned, unsigned, unsigned) const;
 	std::vector<particle> & operator() (unsigned, unsigned, unsigned) const;
+	SymGrid GetGrid() const;
 
 private:
 
@@ -57,7 +59,9 @@ public:
 	explicit ArrayGrid(const SymGrid &, unsigned);
 	~ArrayGrid();
 	double & operator() (unsigned, unsigned, unsigned, unsigned);
+	double * GetSingleArray(unsigned, unsigned, unsigned);
 	unsigned GetCapacity() const;
+	SymGrid GetGrid() const;
 
 private:
 	SymGrid g;
@@ -65,5 +69,7 @@ private:
 	double ****garray;
 };
 
+
+ScalarGrid AGCorrelation(const ArrayGrid &, const ArrayGrid &);
 
 #endif	// GRID_HPP

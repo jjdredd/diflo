@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <gsl/gsl_statistics_double.h>
 
 #include "grid.hpp"
 
@@ -79,6 +80,12 @@ ScalarGrid<T>::~ScalarGrid() {
 		delete[] elem[i];
 	}
 	delete[] elem;
+}
+
+
+template <typename T>
+SymGrid ScalarGrid<T>::GetGrid() const {
+	return g;
 }
 
 template struct ScalarGrid<double>;
@@ -177,6 +184,10 @@ std::vector<particle> & ParticleGrid::operator() (unsigned i, unsigned j, unsign
 	return p.elem[i][j][k];
 }
 
+SymGrid ParticleGrid::GetGrid() const {
+	return g;
+}
+
 
 
 //
@@ -219,4 +230,39 @@ double & ArrayGrid::operator() (unsigned i, unsigned j, unsigned k, unsigned n) 
 
 unsigned ArrayGrid::GetCapacity() const {
 	return capacity;
+}
+
+SymGrid ArrayGrid::GetGrid() const {
+	return g;
+}
+
+double * ArrayGrid::GetSingleArray(unsigned i, unsigned j, unsigned k) {
+	return garray[i][j][k];
+}
+
+
+
+//
+// statistics functions
+// 
+
+ScalarGrid AGCorrelation(const ArrayGrid &a, const ArrayGrid &b) {
+	SymGrid g = a.GetGrid();
+	ScalarGrid res(g);
+
+	// check!
+	// are a and be on the same grid?
+	// if (a.GetGrid() != b.GetGrid())
+	
+	for (unsigned i = 0; i < g.Nodes[0]; i++) {
+		for (unsigned j = 0; j < g.Nodes[1]; j++) {
+			for (unsigned k = 0; k < g.Nodes[2]; k++) {
+				res.elem[i][j][k] =
+					gsl_ststs_correlation(a.GetArray(i, j, k), 1,
+							      b.GetArray(i, j, k), 1,
+							      a.GetCapacity());
+			}
+		}
+	}
+	return res;
 }
