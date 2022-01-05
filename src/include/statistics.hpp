@@ -23,12 +23,12 @@
 
 // mean
 
-template <typename T>
+template <typename T, typename U = T>
 class StatAggregatorMean {
 
 public:
-	StatAggregatorMean()
-		: Mean(0), nSamples(0) {}
+	StatAggregatorMean(U &arg)
+		: Mean(arg), nSamples(0) {}
 
 	virtual ~StatAggregatorMean() {}
 
@@ -44,7 +44,7 @@ public:
 	}
 
 	T CurrentValue() const { return Mean; }
-	unsigned CurrentNSamples const { return nSamples; }
+	unsigned CurrentNSamples() const { return nSamples; }
 
 private:
 	T Mean;
@@ -55,12 +55,12 @@ private:
 // using Welford's one pass algorithm
 // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
 
-template <typename T>
+template <typename T, typename U = T>
 class StatAggregatorWelfordStD {
 
 public:
-	StatAggregatorWelfordStD()
-		: S(0), Mean(), nSamples(0) {}
+	StatAggregatorWelfordStD(U &arg)
+		: S(arg), Mean(arg), nSamples(0) {}
 
 	virtual ~StatAggregatorWelfordStD() {}
 
@@ -74,21 +74,53 @@ public:
 
 	void Reset() {
 		S = 0;
-		nSamples = 0;
 		Mean.Reset();
 	}
 
 	T CurrentValue() const { return sqrt(S / Mean.CurrentNSamples()) ; }
 	T CurrentMean() const { return Mean.CurrentValue() ; }
+	unsigned CurrentNSamples() const { return Mean.CurrentNSamples(); }
 
 private:
 	T S;
-	StatAggregatorMean<T> Mean;
+	StatAggregatorMean<T, U> Mean;
 };
 
 // correlation
 // computed from covariance
 // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online
+
+template <typename T, typename U = T>
+class StatAggregatorCorrelations {
+
+public:
+	StatAggregatorCorrelations(U &arg)
+		: yStd(arg), xStd(arg) {}
+	virtual ~StatAggregatorCorrelations() {}
+
+	void ConsumeDataPoint(const T &x, const T &y) {
+		T yMean = yStd.CurrentMean();
+		xStd.ConsumeDataPoint(x);
+		yStd.ConsumeDataPoint(y);
+		T xMean = xStd.CurrentMean();
+		C = C + (x - xMean) * (y - yMean);
+	}
+
+	void Reset() {
+		C = 0;
+		yStd.Reset();
+		xStd.Reset();
+	}
+
+	T CurrentValue() const { 
+		T Cov = C / xStd.CurrentNSamples();
+		return Cov / (yStd.CurrentValue() * xStd.CurrentValue());
+	}
+
+private:
+	T C;
+	StatAggregatorWelfordStD<T, U> yStd, xStd;
+};
 
 
 #endif	//
