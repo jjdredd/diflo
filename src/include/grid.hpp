@@ -59,7 +59,7 @@ public:
 	explicit ArrayGrid(const SymGrid &, unsigned);
 	~ArrayGrid();
 	double & operator() (unsigned, unsigned, unsigned, unsigned);
-	double * GetSingleArray(unsigned, unsigned, unsigned);
+	double * GetSingleArray(unsigned, unsigned, unsigned) const;
 	unsigned GetCapacity() const;
 	SymGrid GetGrid() const;
 
@@ -70,6 +70,7 @@ private:
 };
 
 
-ScalarGrid AGCorrelation(const ArrayGrid &, const ArrayGrid &);
+ScalarGrid<double> AGCorrelation(const ArrayGrid &, const ArrayGrid &);
+void WriteScalarGrid(const std::string &, const ScalarGrid<double> &);
 
 #endif	// GRID_HPP

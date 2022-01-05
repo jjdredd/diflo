@@ -236,7 +236,7 @@ SymGrid ArrayGrid::GetGrid() const {
 	return g;
 }
 
-double * ArrayGrid::GetSingleArray(unsigned i, unsigned j, unsigned k) {
+double * ArrayGrid::GetSingleArray(unsigned i, unsigned j, unsigned k) const {
 	return garray[i][j][k];
 }
 
@@ -246,9 +246,9 @@ double * ArrayGrid::GetSingleArray(unsigned i, unsigned j, unsigned k) {
 // statistics functions
 // 
 
-ScalarGrid AGCorrelation(const ArrayGrid &a, const ArrayGrid &b) {
+ScalarGrid<double> AGCorrelation(const ArrayGrid &a, const ArrayGrid &b) {
 	SymGrid g = a.GetGrid();
-	ScalarGrid res(g);
+	ScalarGrid<double> res(g);
 
 	// check!
 	// are a and be on the same grid?
@@ -258,11 +258,29 @@ ScalarGrid AGCorrelation(const ArrayGrid &a, const ArrayGrid &b) {
 		for (unsigned j = 0; j < g.Nodes[1]; j++) {
 			for (unsigned k = 0; k < g.Nodes[2]; k++) {
 				res.elem[i][j][k] =
-					gsl_ststs_correlation(a.GetArray(i, j, k), 1,
-							      b.GetArray(i, j, k), 1,
+					gsl_stats_correlation(a.GetSingleArray(i, j, k), 1,
+							      b.GetSingleArray(i, j, k), 1,
 							      a.GetCapacity());
 			}
 		}
 	}
 	return res;
+}
+
+
+void WriteScalarGrid(const std::string &base_path, const ScalarGrid<double> &sg) {
+	for (unsigned j = 0; j < sg.g.Nodes[1]; j++) {
+		std::ofstream out_file;
+		std::string file_path;
+		file_path = base_path + std::to_string(j)
+			+ std::string(".txt");
+		out_file.open(file_path, std::ofstream::out);
+		for (unsigned k = 0; k < sg.g.Nodes[2]; k++) {
+			for (unsigned i = 0; i < sg.g.Nodes[0]; i++) {
+				out_file << sg.elem[i][j][k] << '\t';
+			}
+			out_file << std::endl;
+		}
+		out_file.close();
+	}
 }

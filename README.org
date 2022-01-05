@@ -1,0 +1,26 @@
+* diflo
+  Software for directed flow and handedness analysis of simulation data
+  (including (P)HSD, ALICE, ROOT data formats).
+  Part of software developed during work at JINR.
+
+** Compiling
+   Some modules rely on GNU Scientific Library (GSL).
+   You will also need the C++ Boost library to compile the
+   latest version and the ROOT libraries to compile to
+   root branch.
+   #+BEGIN_SRC
+   mkdir bin
+   cmake ../src
+   make
+   #+END_SRC
+   you can also
+   #+BEGIN_SRC
+   make <target>
+   #+END_SRC
+   where <target> is one of 'diflo.elf', 'multip.elf', 'sdnopt.elf' or
+   'sphand.elf'
+
+** Running
+   for running check out help, for command line options,
+   you will need root, or (P)hsd fort.300 and fort.301
+   files.

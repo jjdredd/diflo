@@ -66,33 +66,56 @@ int main(int argc, const char **argv) {
 		s.close();
 	}
 
-	SymGrid g(12, 50);
+	SymGrid g(12, 20);
 	ParticleGrid pg(g, 4);
+	HandednessGrid HG(g);
+	Helicity Hel(g);
+	ArrayGrid handedness(g, D.ISUBS * D.NUM), helicity(g, D.ISUBS * D.NUM);
 
+	unsigned i = 0;
 	for(unsigned isub = 0; isub < D.ISUBS; isub++){
 		for(unsigned irun = 0; irun < D.NUM; irun++){
+			// get particles into a grid
 			pg.Populate(D.P[isub][irun]);
+			pg.ShrinkToFit();
+
+			// compute handedness
+			HG.Compute(pg);
+			HG.CopyArray(handedness, i);
+
+			// compute helicity
+			Hel.Compute(pg);
+			Hel.CopyArray(helicity, i);
+
+			pg.Clear();
+			i++;
 		}
 	}
 
-	// for(unsigned isub = 0; isub < D.ISUBS; isub++){
-	// 	pg.Populate(D.P[isub][0]);
-	// }
 
-	pg.ShrinkToFit();
+	// XXX: FIXME
+	// when calculating correlations, find the grid position
+	// that always have enough particles
+	// (calculate a mask)
 
+	ScalarGrid<double> correlation = AGCorrelation(handedness, helicity);
+
+	WriteScalarGrid(std::string(cmdvars["out"].as<std::string>())
+			+ std::string("/correl_"), correlation);
+
+
+#if 0
 	pg.WriteParticleCount(std::string(cmdvars["out"].as<std::string>())
 			      + std::string("pcnt_"));
 
-	HandednessGrid HG(g);
-	HG.Compute(pg);
 	HG.WriteOutHandedness(std::string(cmdvars["out"].as<std::string>())
 			      + std::string("handgrid_"));
 
-	Helicity Hel(g);
+
 	Hel.Compute(pg);
 	Hel.WriteOutHelicity(std::string(cmdvars["out"].as<std::string>())
 			      + std::string("helgrid_"));
+#endif
 
 	return 0;
 }
