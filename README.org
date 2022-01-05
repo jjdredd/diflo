@@ -23,4 +23,4 @@
 ** Running
    for running check out help, for command line options,
    you will need root, or (P)hsd fort.300 and fort.301
-   files.
+   files as well as the 'input' file.
