@@ -19,6 +19,7 @@ include_directories(AFTER "${CMAKE_SOURCE_DIR}/include")
 
 add_subdirectory(input)
 add_subdirectory(analysis)
+add_subdirectory(test)
 
 # might actually need -lgslblas or something
 target_link_libraries(diflo.elf PUBLIC input
