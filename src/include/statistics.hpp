@@ -27,7 +27,7 @@ template <typename T, typename U = T>
 class StatAggregatorMean {
 
 public:
-	StatAggregatorMean(U &arg)
+	StatAggregatorMean(U arg)
 		: Mean(arg), nSamples(0) {}
 
 	virtual ~StatAggregatorMean() {}
@@ -59,8 +59,8 @@ template <typename T, typename U = T>
 class StatAggregatorWelfordStD {
 
 public:
-	StatAggregatorWelfordStD(U &arg)
-		: S(arg), Mean(arg), nSamples(0) {}
+	StatAggregatorWelfordStD(U arg)
+		: S(arg), Mean(arg) {}
 
 	virtual ~StatAggregatorWelfordStD() {}
 
@@ -94,8 +94,8 @@ template <typename T, typename U = T>
 class StatAggregatorCorrelations {
 
 public:
-	StatAggregatorCorrelations(U &arg)
-		: yStd(arg), xStd(arg) {}
+	StatAggregatorCorrelations(U arg)
+		: C(arg), yStd(arg), xStd(arg) {}
 	virtual ~StatAggregatorCorrelations() {}
 
 	void ConsumeDataPoint(const T &x, const T &y) {
